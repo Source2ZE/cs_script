@@ -1,8 +1,8 @@
 {
   "name": "@s2ze/types",
   "version": "1.0.0",
-  "description": "",
+  "description": "Valve provided type definitions for CS2 scripting",
   "license": "MIT",
-  "author": "Source2 ZE",
+  "author": "Source2ZE",
   "types": "index.d.ts"
 }

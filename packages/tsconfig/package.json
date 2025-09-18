@@ -1,0 +1,9 @@
+{
+  "name": "@s2ze/tsconfig",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Source2ZE",
+  "dependencies": {
+    "@s2ze/types": "file:../types"
+  }
+}

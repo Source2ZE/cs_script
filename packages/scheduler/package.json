@@ -1,0 +1,11 @@
+{
+  "name": "@s2ze/scheduler",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "Source2ZE",
+  "types": "index.d.ts",
+  "dependencies": {
+    "@s2ze/tsconfig": "file:../tsconfig"
+  }
+}
