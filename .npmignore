@@ -1,4 +1,4 @@
 *.ts
 package-lock.json
 tsconfig.json
-src/**/*
+src/
