@@ -1,6 +1,6 @@
 {
   "name": "@s2ze/tsconfig",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Source2ZE",
   "dependencies": {
