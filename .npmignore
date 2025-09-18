@@ -1,7 +1,4 @@
 *.ts
-**/*.ts
-!**/*.d.ts
-!*.d.ts
 package-lock.json
 tsconfig.json
 src/**/*
