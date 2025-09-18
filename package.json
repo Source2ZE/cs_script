@@ -7,5 +7,9 @@
   "dependencies": {},
   "devDependencies": {
     "lerna": "^8.2.4"
+  },
+  "scripts": {
+    "build": "lerna run build",
+    "lerna:publish": "lerna publish --no-private"
   }
 }
