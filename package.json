@@ -1,15 +1,17 @@
 {
-  "name": "root",
+  "name": "cs-script-workspace",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {},
   "devDependencies": {
-    "lerna": "^8.2.4"
+    "lerna": "^8.2.4",
+    "prettier": "^3.6.2"
   },
   "scripts": {
     "build": "lerna run build",
-    "lerna:publish": "lerna publish --no-private"
+    "lerna:publish": "lerna publish --no-private",
+    "lint": "prettier . --write"
   }
 }
