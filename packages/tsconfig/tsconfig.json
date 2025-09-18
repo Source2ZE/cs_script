@@ -3,7 +3,6 @@
     "target": "es2016",
     "module": "esnext",
     "types": ["@s2ze/types"],
-    "outDir": "D:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive/content/csgo_addons/scripting/maps/scripts",
     "allowJs": true,
     "skipLibCheck": true
   }
