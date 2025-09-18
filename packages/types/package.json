@@ -4,5 +4,9 @@
   "description": "Valve provided type definitions for CS2 scripting",
   "license": "MIT",
   "author": "Source2ZE",
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
