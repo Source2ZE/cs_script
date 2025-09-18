@@ -4,7 +4,7 @@
   "description": "",
   "license": "MIT",
   "author": "Source2ZE",
-  "types": "index.d.ts",
+  "types": "build/index.d.ts",
   "main": "build/index.js",
   "dependencies": {
     "@s2ze/tsconfig": "file:../tsconfig"

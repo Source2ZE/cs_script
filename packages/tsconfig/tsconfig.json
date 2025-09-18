@@ -4,6 +4,8 @@
     "module": "esnext",
     "types": ["@s2ze/types"],
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
   }
 }
