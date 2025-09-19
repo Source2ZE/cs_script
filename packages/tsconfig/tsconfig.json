@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2024",
     "module": "esnext",
     "types": ["@s2ze/types"],
     "allowJs": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["ES2024"]
   }
 }
