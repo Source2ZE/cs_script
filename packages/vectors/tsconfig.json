@@ -1,0 +1,9 @@
+{
+  "extends": "@s2ze/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "declaration": true
+  },
+  "include": ["./src"]
+}
