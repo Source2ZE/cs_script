@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["@s2ze/types", "@s2ze/types/extended"]
+  }
+}
