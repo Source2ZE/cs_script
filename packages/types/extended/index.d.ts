@@ -1,5 +1,11 @@
 declare module 'cs_script/point_script' {
-  interface GameEventDefs {
+  interface Domain {
+    OnGameEvent<E extends keyof GameEventDefsExtended>(
+      eventName: E,
+      callback: (args: GameEventDefsExtended[E]) => void
+    ): void
+  }
+  interface GameEventDefsExtended {
     server_spawn: {
       hostname: string
       address: string
@@ -20,6 +26,22 @@ declare module 'cs_script/point_script' {
     player_activate: { userid: number }
     player_connect_full: { userid: number }
     player_full_update: { userid: number; count: number }
+    player_connect: {
+      name: string
+      userid: number
+      networkid: string
+      xuid: string
+      address: string
+      bot: boolean
+    }
+    player_disconnect: {
+      userid: number
+      reason: number
+      name: string
+      networkid: string
+      xuid: string
+      PlayerID: number
+    }
     player_info: { name: string; userid: number; steamid: string; bot: boolean }
     player_spawn: { userid: number; userid_pawn: number }
     player_team: {
@@ -49,6 +71,33 @@ declare module 'cs_script/point_script' {
     player_chat: { teamonly: boolean; userid: number; text: string }
     local_player_pawn_changed: {}
     player_stats_updated: { forceupload: boolean }
+    player_death: {
+      userid: number
+      attacker: number
+      assister: number
+      assistedflash: boolean
+      weapon: string
+      weapon_itemid: string
+      weapon_fauxitemid: string
+      weapon_originalowner_xuid: string
+      headshot: boolean
+      dominated: number
+      revenge: number
+      wipe: number
+      penetrated: number
+      noreplay: boolean
+      noscope: boolean
+      thrusmoke: boolean
+      attackerblind: boolean
+      distance: number
+      userid_pawn: number
+      attacker_pawn: number
+      assister_pawn: number
+      dmg_health: number
+      dmg_armor: number
+      hitgroup: number
+      attackerinair: boolean
+    }
     player_footstep: { userid: number; userid_pawn: number }
     player_hintmessage: { hintmessage: string }
     player_spawned: { userid: number; inrestart: boolean; userid_pawn: number }
@@ -106,6 +155,16 @@ declare module 'cs_script/point_script' {
     teamplay_round_start: { full_reset: boolean }
     team_intro_start: {}
     team_intro_end: {}
+
+    round_start: { timelimit: number; fraglimit: number; objective: string }
+    round_end: {
+      winner: number
+      reason: number
+      message: string
+      legacy: number
+      player_count: number
+      nomusic: number
+    }
     round_start_pre_entity: {}
     round_start_post_nav: {}
     round_freeze_end: {}
@@ -284,8 +343,10 @@ declare module 'cs_script/point_script' {
 
     bomb_beginplant: { userid: number; site: number; userid_pawn: number }
     bomb_abortplant: { userid: number; site: number; userid_pawn: number }
+    bomb_planted: { userid: number; site: number; userid_pawn: number }
     bomb_begindefuse: { userid: number; haskit: boolean; userid_pawn: number }
     bomb_abortdefuse: { userid: number; userid_pawn: number }
+    bomb_defused: { userid: number; site: number; userid_pawn: number }
     bomb_exploded: { userid: number; site: number; userid_pawn: number }
     bomb_dropped: { userid: number; entindex: number; userid_pawn: number }
     bomb_pickup: { userid: number; userid_pawn: number }
