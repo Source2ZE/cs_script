@@ -1,4 +1,7 @@
-import { Vector } from 'cs_script/point_script'
+import { QAngle, Vector } from 'cs_script/point_script'
+import { Euler } from './euler'
+
+const RAD_TO_DEG = 180 / Math.PI
 
 export class Vector3Utils {
   public static equals(a: Vector, b: Vector): boolean {
@@ -45,6 +48,14 @@ export class Vector3Utils {
     return vector.x ** 2 + vector.y ** 2 + vector.z ** 2
   }
 
+  public static length2D(vector: Vector): number {
+    return Math.sqrt(Vector3Utils.length2DSquared(vector))
+  }
+
+  public static length2DSquared(vector: Vector): number {
+    return vector.x ** 2 + vector.y ** 2
+  }
+
   public static normalize(vector: Vector): Vec3 {
     const length = Vector3Utils.length(vector)
     return length ? Vector3Utils.divide(vector, length) : Vec3.Zero
@@ -81,6 +92,28 @@ export class Vector3Utils {
       Math.floor(vector.z)
     )
   }
+
+  public static VectorAngles(vector: Vector): Euler {
+    let yaw = 0
+    let pitch = 0
+
+    if (!vector.y && !vector.x) {
+      if (vector.z > 0) pitch = 270
+      else pitch = 90
+    } else {
+      yaw = Math.atan2(vector.y, vector.x) * RAD_TO_DEG
+      if (yaw < 0) yaw += 360
+
+      pitch = Math.atan2(-vector.z, Vector3Utils.length2D(vector)) * RAD_TO_DEG
+      if (pitch < 0) pitch += 360
+    }
+
+    return new Euler({
+      pitch,
+      yaw,
+      roll: 0,
+    })
+  }
 }
 
 export class Vec3 {
@@ -103,6 +136,38 @@ export class Vec3 {
     }
   }
 
+  public get length(): number {
+    return Vector3Utils.length(this)
+  }
+
+  public get lengthSquared(): number {
+    return Vector3Utils.lengthSquared(this)
+  }
+
+  public get length2D(): number {
+    return Vector3Utils.length2D(this)
+  }
+
+  public get length2DSquared(): number {
+    return Vector3Utils.length2DSquared(this)
+  }
+
+  public get normal(): Vec3 {
+    return Vector3Utils.normalize(this)
+  }
+
+  public get negative(): Vec3 {
+    return Vector3Utils.negate(this)
+  }
+
+  public get floored(): Vec3 {
+    return Vector3Utils.floor(this)
+  }
+
+  public get eulerAngles(): Euler {
+    return Vector3Utils.VectorAngles(this)
+  }
+
   public toString = (): string => {
     return `Vec3: [${this.x}, ${this.y}, ${this.z}]`
   }
@@ -121,26 +186,6 @@ export class Vec3 {
 
   public divide(vector: Vector): Vec3 {
     return Vector3Utils.divide(this, vector)
-  }
-
-  public get length(): number {
-    return Vector3Utils.length(this)
-  }
-
-  public get lengthSquared(): number {
-    return Vector3Utils.lengthSquared(this)
-  }
-
-  public get normal(): Vec3 {
-    return Vector3Utils.normalize(this)
-  }
-
-  public get negative(): Vec3 {
-    return Vector3Utils.negate(this)
-  }
-
-  public get floored(): Vec3 {
-    return Vector3Utils.floor(this)
   }
 
   public scale(vector: Vector): Vec3
