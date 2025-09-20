@@ -6,6 +6,7 @@
   "author": "Source2ZE",
   "types": "build/index.d.ts",
   "main": "build/index.js",
+  "type": "module",
   "devDependencies": {
     "@s2ze/tsconfig": "file:../tsconfig"
   },

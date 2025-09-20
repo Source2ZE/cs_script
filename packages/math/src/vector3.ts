@@ -1,7 +1,6 @@
-import { QAngle, Vector } from 'cs_script/point_script'
+import { Vector } from 'cs_script/point_script'
 import { Euler } from './euler'
-
-const RAD_TO_DEG = 180 / Math.PI
+import { RAD_TO_DEG } from './constants'
 
 export class Vector3Utils {
   public static equals(a: Vector, b: Vector): boolean {

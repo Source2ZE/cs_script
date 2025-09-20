@@ -16,5 +16,6 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
-  }
+  },
+  "type": "module"
 }

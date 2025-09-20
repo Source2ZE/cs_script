@@ -13,5 +13,6 @@
     "build": "lerna run build",
     "lerna:publish": "lerna publish --no-private",
     "lint": "prettier . --write"
-  }
+  },
+  "type": "module"
 }
