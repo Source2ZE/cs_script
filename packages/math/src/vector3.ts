@@ -1,4 +1,4 @@
-import { Vector } from 'cs_script/point_script'
+import { Instance, Vector } from 'cs_script/point_script'
 import { Euler } from './euler'
 import { RAD_TO_DEG } from './constants'
 import { MathUtils } from './math'
@@ -98,14 +98,12 @@ export class Vector3Utils {
     let pitch = 0
 
     if (!vector.y && !vector.x) {
-      if (vector.z > 0) pitch = 270
+      if (vector.z > 0) pitch = -90
       else pitch = 90
     } else {
       yaw = Math.atan2(vector.y, vector.x) * RAD_TO_DEG
-      if (yaw < 0) yaw += 360
 
       pitch = Math.atan2(-vector.z, Vector3Utils.length2D(vector)) * RAD_TO_DEG
-      if (pitch < 0) pitch += 360
     }
 
     return new Euler({
@@ -132,6 +130,10 @@ export class Vector3Utils {
       a.y + (b.y - a.y) * t,
       a.z + (b.z - a.z) * t
     )
+  }
+
+  public static directionTowards(a: Vector, b: Vector) {
+    return Vector3Utils.subtract(b, a).normal
   }
 }
 
@@ -241,5 +243,12 @@ export class Vec3 {
 
   public lerpTo(vector: Vector, fraction: number, clamp: boolean = true): Vec3 {
     return Vector3Utils.lerp(this, vector, fraction)
+  }
+
+  /**
+   * Gets the normalized direction vector pointing towards specified point (subtracting two vectors)
+   */
+  public directionTowards(vector: Vector) {
+    return Vector3Utils.directionTowards(this, vector)
   }
 }
