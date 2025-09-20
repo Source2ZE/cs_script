@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "Source2ZE",
   "peerDependencies": {
-    "@s2ze/types": "^1.0.0"
+    "@s2ze/types": "^2.0.0"
   },
   "publishConfig": {
     "access": "public",
