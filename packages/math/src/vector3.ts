@@ -184,7 +184,7 @@ export class Vec3 {
   }
 
   public get eulerAngles(): Euler {
-    return Vector3Utils.VectorAngles(this)
+    return Vector3Utils.vectorAngles(this)
   }
 
   public toString = (): string => {
