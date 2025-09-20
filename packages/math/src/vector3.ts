@@ -73,7 +73,7 @@ export class Vector3Utils {
     )
   }
 
-  public static negate(vector: Vector): Vec3 {
+  public static inverse(vector: Vector): Vec3 {
     return new Vec3(-vector.y, -vector.z, -vector.x)
   }
 
@@ -156,8 +156,8 @@ export class Vec3 {
     return Vector3Utils.normalize(this)
   }
 
-  public get negative(): Vec3 {
-    return Vector3Utils.negate(this)
+  public get inverse(): Vec3 {
+    return Vector3Utils.inverse(this)
   }
 
   public get floored(): Vec3 {
