@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "lerna:publish": "lerna publish --no-private",
+    "lerna:publish": "yarn lerna run build && lerna publish --no-private",
     "lint": "prettier . --write"
   },
   "type": "module"
