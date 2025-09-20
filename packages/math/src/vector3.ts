@@ -1,4 +1,4 @@
-import { Instance, Vector } from 'cs_script/point_script'
+import { Vector } from 'cs_script/point_script'
 import { Euler } from './euler'
 import { RAD_TO_DEG } from './constants'
 import { MathUtils } from './math'
@@ -74,7 +74,7 @@ export class Vector3Utils {
   }
 
   public static inverse(vector: Vector): Vec3 {
-    return new Vec3(-vector.y, -vector.z, -vector.x)
+    return new Vec3(-vector.x, -vector.y, -vector.z)
   }
 
   public static distance(a: Vector, b: Vector): number {
@@ -135,6 +135,10 @@ export class Vector3Utils {
   public static directionTowards(a: Vector, b: Vector) {
     return Vector3Utils.subtract(b, a).normal
   }
+
+  public static lookAt(a: Vector, b: Vector): Euler {
+    return Vector3Utils.directionTowards(a, b).eulerAngles
+  }
 }
 
 export class Vec3 {
@@ -189,7 +193,7 @@ export class Vec3 {
     return Vector3Utils.vectorAngles(this)
   }
 
-  public toString = (): string => {
+  public toString(): string {
     return `Vec3: [${this.x}, ${this.y}, ${this.z}]`
   }
 
@@ -250,5 +254,9 @@ export class Vec3 {
    */
   public directionTowards(vector: Vector) {
     return Vector3Utils.directionTowards(this, vector)
+  }
+
+  public lookAt(vector: Vector) {
+    return Vector3Utils.lookAt(this, vector)
   }
 }
