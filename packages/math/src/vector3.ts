@@ -1,6 +1,7 @@
 import { Vector } from 'cs_script/point_script'
 import { Euler } from './euler'
 import { RAD_TO_DEG } from './constants'
+import { MathUtils } from './math'
 
 export class Vector3Utils {
   public static equals(a: Vector, b: Vector): boolean {
@@ -113,6 +114,25 @@ export class Vector3Utils {
       roll: 0,
     })
   }
+
+  public static lerp(
+    a: Vector,
+    b: Vector,
+    fraction: number,
+    clamp: boolean = true
+  ): Vec3 {
+    let t = fraction
+    if (clamp) {
+      t = MathUtils.clamp(t, 0, 1)
+    }
+
+    // a + (b - a) * t
+    return new Vec3(
+      a.x + (b.x - a.x) * t,
+      a.y + (b.y - a.y) * t,
+      a.z + (b.z - a.z) * t
+    )
+  }
 }
 
 export class Vec3 {
@@ -217,5 +237,9 @@ export class Vec3 {
 
   public distanceSquared(vector: Vector): number {
     return Vector3Utils.distanceSquared(this, vector)
+  }
+
+  public lerpTo(vector: Vector, fraction: number, clamp: boolean = true): Vec3 {
+    return Vector3Utils.lerp(this, vector, fraction)
   }
 }
