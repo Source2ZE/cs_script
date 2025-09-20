@@ -93,7 +93,7 @@ export class Vector3Utils {
     )
   }
 
-  public static VectorAngles(vector: Vector): Euler {
+  public static vectorAngles(vector: Vector): Euler {
     let yaw = 0
     let pitch = 0
 
