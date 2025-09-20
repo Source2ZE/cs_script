@@ -84,11 +84,26 @@ export class EulerUtils {
       t = MathUtils.clamp(t, 0, 1)
     }
 
+    const lerpComponent = (start: number, end: number, t: number): number => {
+      // Calculate the shortest angular distance
+      let delta = end - start
+
+      // Normalize delta to [-180, 180] range to find shortest path
+      if (delta > 180) {
+        delta -= 360
+      } else if (delta < -180) {
+        delta += 360
+      }
+
+      // Interpolate using the shortest path
+      return start + delta * t
+    }
+
     // a + (b - a) * t
     return new Euler(
-      a.pitch + (b.pitch - a.pitch) * t,
-      a.yaw + (b.yaw - a.yaw) * t,
-      a.roll + (b.roll - a.roll) * t
+      lerpComponent(a.pitch, b.pitch, t),
+      lerpComponent(a.yaw, b.yaw, t),
+      lerpComponent(a.roll, b.roll, t)
     )
   }
 
@@ -102,6 +117,38 @@ export class EulerUtils {
 
   public static withRoll(angle: QAngle, roll: number): Euler {
     return new Euler(angle.pitch, angle.yaw, roll)
+  }
+
+  public static rotateTowards(
+    current: QAngle,
+    target: QAngle,
+    maxStep: number
+  ): Euler {
+    const rotateComponent = (
+      current: number,
+      target: number,
+      step: number
+    ): number => {
+      let delta = target - current
+
+      if (delta > 180) {
+        delta -= 360
+      } else if (delta < -180) {
+        delta += 360
+      }
+
+      if (Math.abs(delta) <= step) {
+        return target
+      } else {
+        return current + Math.sign(delta) * step
+      }
+    }
+
+    return new Euler(
+      rotateComponent(current.pitch, target.pitch, maxStep),
+      rotateComponent(current.yaw, target.yaw, maxStep),
+      rotateComponent(current.roll, target.roll, maxStep)
+    )
   }
 }
 
@@ -186,6 +233,7 @@ export class Euler {
   /**
    * Linearly interpolates the angle to an angle based on a 0.0-1.0 fraction
    * Clamp limits the fraction to [0,1]
+   * ! Euler angles are not suited for interpolation, prefer to use quarternions instead
    */
   public lerp(angle: QAngle, fraction: number, clamp: boolean = true): Euler {
     return EulerUtils.lerp(this, angle, fraction, clamp)
@@ -210,5 +258,13 @@ export class Euler {
    */
   public withRoll(roll: number): Euler {
     return EulerUtils.withRoll(this, roll)
+  }
+
+  /**
+   * Rotates an angle towards another angle by a specific step
+   * ! Euler angles are not suited for interpolation, prefer to use quarternions instead
+   */
+  public rotateTowards(angle: QAngle, maxStep: number): Euler {
+    return EulerUtils.rotateTowards(this, angle, maxStep)
   }
 }
