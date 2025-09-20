@@ -1,5 +1,4 @@
 import { QAngle } from 'cs_script/point_script'
-import { RAD_TO_DEG } from './constants'
 import { Vec3 } from './vector3'
 import { MathUtils } from './math'
 

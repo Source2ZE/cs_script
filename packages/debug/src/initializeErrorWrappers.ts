@@ -32,7 +32,7 @@ function errorWrapper(fn: Function, ...args: any[]) {
       })
     }
   } catch (e: any) {
-    Instance.Msg('Caught error: ' + e.message)
+    printError(e)
   }
 }
 
