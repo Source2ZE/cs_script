@@ -20,4 +20,8 @@ export class Euler {
       this.roll = roll
     }
   }
+
+  public toString = (): string => {
+    return `Euler: [${this.pitch}, ${this.yaw}, ${this.roll}]`
+  }
 }
