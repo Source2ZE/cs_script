@@ -150,6 +150,14 @@ export class EulerUtils {
       rotateComponent(current.roll, target.roll, maxStep)
     )
   }
+
+  public static clamp(angle: QAngle, min: QAngle, max: QAngle): Euler {
+    return new Euler(
+      MathUtils.clamp(angle.pitch, min.pitch, max.pitch),
+      MathUtils.clamp(angle.yaw, min.yaw, max.yaw),
+      MathUtils.clamp(angle.roll, min.roll, max.roll)
+    )
+  }
 }
 
 export class Euler {
@@ -266,5 +274,12 @@ export class Euler {
    */
   public rotateTowards(angle: QAngle, maxStep: number): Euler {
     return EulerUtils.rotateTowards(this, angle, maxStep)
+  }
+
+  /**
+   * Clamps each component (pitch, yaw, roll) between the corresponding min and max values
+   */
+  public clamp(min: QAngle, max: QAngle): Euler {
+    return EulerUtils.clamp(this, min, max)
   }
 }
