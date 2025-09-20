@@ -8,7 +8,7 @@ export class EulerUtils {
     return a.pitch === b.pitch && a.yaw === b.yaw && a.roll === b.roll
   }
 
-  public static normalize(angles: QAngle): Euler {
+  public static normalize(angle: QAngle): Euler {
     const normalizeAngle = (angle: number): number => {
       angle = angle % 360
       if (angle > 180) return angle - 360
@@ -17,15 +17,15 @@ export class EulerUtils {
     }
 
     return new Euler(
-      normalizeAngle(angles.pitch),
-      normalizeAngle(angles.yaw),
-      normalizeAngle(angles.roll)
+      normalizeAngle(angle.pitch),
+      normalizeAngle(angle.yaw),
+      normalizeAngle(angle.roll)
     )
   }
 
-  public static forward(angles: QAngle): Vec3 {
-    const pitchInRad = (angles.pitch / 180) * Math.PI
-    const yawInRad = (angles.yaw / 180) * Math.PI
+  public static forward(angle: QAngle): Vec3 {
+    const pitchInRad = (angle.pitch / 180) * Math.PI
+    const yawInRad = (angle.yaw / 180) * Math.PI
 
     const cosPitch = Math.cos(pitchInRad)
 
@@ -36,10 +36,10 @@ export class EulerUtils {
     )
   }
 
-  public static right(angles: QAngle): Vec3 {
-    const pitchInRad = (angles.pitch / 180) * Math.PI
-    const yawInRad = (angles.yaw / 180) * Math.PI
-    const rollInRad = (angles.roll / 180) * Math.PI
+  public static right(angle: QAngle): Vec3 {
+    const pitchInRad = (angle.pitch / 180) * Math.PI
+    const yawInRad = (angle.yaw / 180) * Math.PI
+    const rollInRad = (angle.roll / 180) * Math.PI
 
     const sinPitch = Math.sin(pitchInRad)
     const sinYaw = Math.sin(yawInRad)
@@ -55,10 +55,10 @@ export class EulerUtils {
     )
   }
 
-  public static up(angles: QAngle): Vec3 {
-    const pitchInRad = (angles.pitch / 180) * Math.PI
-    const yawInRad = (angles.yaw / 180) * Math.PI
-    const rollInRad = (angles.roll / 180) * Math.PI
+  public static up(angle: QAngle): Vec3 {
+    const pitchInRad = (angle.pitch / 180) * Math.PI
+    const yawInRad = (angle.yaw / 180) * Math.PI
+    const rollInRad = (angle.roll / 180) * Math.PI
 
     const sinPitch = Math.sin(pitchInRad)
     const sinYaw = Math.sin(yawInRad)
@@ -92,6 +92,18 @@ export class EulerUtils {
       a.roll + (b.roll - a.roll) * t
     )
   }
+
+  public static withPitch(angle: QAngle, pitch: number): Euler {
+    return new Euler(pitch, angle.yaw, angle.roll)
+  }
+
+  public static withYaw(angle: QAngle, yaw: number): Euler {
+    return new Euler(angle.pitch, yaw, angle.roll)
+  }
+
+  public static withRoll(angle: QAngle, roll: number): Euler {
+    return new Euler(angle.pitch, angle.yaw, roll)
+  }
 }
 
 export class Euler {
@@ -115,30 +127,51 @@ export class Euler {
     }
   }
 
+  /**
+   * Returns angle with every componented clamped from -180 to 180
+   */
   public get normal(): Euler {
     return EulerUtils.normalize(this)
   }
 
+  /**
+   * Returns a normalized forward direction vector
+   */
   public get forward(): Vec3 {
     return EulerUtils.forward(this)
   }
 
+  /**
+   * Returns a normalized backward direction vector
+   */
   public get backward(): Vec3 {
     return this.forward.inverse
   }
 
+  /**
+   * Returns a normalized right direction vector
+   */
   public get right(): Vec3 {
     return EulerUtils.right(this)
   }
 
+  /**
+   * Returns a normalized left direction vector
+   */
   public get left(): Vec3 {
     return this.right.inverse
   }
 
+  /**
+   * Returns a normalized up direction vector
+   */
   public get up(): Vec3 {
     return EulerUtils.up(this)
   }
 
+  /**
+   * Returns a normalized down direction vector
+   */
   public get down(): Vec3 {
     return this.up.inverse
   }
@@ -147,10 +180,36 @@ export class Euler {
     return `Euler: [${this.pitch}, ${this.yaw}, ${this.roll}]`
   }
 
-  public equals(angles: QAngle): boolean {
-    return EulerUtils.equals(this, angles)
+  public equals(angle: QAngle): boolean {
+    return EulerUtils.equals(this, angle)
   }
-  public lerp(angles: QAngle, fraction: number, clamp: boolean = true): Euler {
-    return EulerUtils.lerp(this, angles, fraction, clamp)
+
+  /**
+   * Linearly interpolates the angle to an angle based on a 0.0-1.0 fraction
+   * Clamp limits the fraction to [0,1]
+   */
+  public lerp(angle: QAngle, fraction: number, clamp: boolean = true): Euler {
+    return EulerUtils.lerp(this, angle, fraction, clamp)
+  }
+
+  /**
+   * Returns the same angle but with a supplied pitch component
+   */
+  public withPitch(pitch: number): Euler {
+    return EulerUtils.withPitch(this, pitch)
+  }
+
+  /**
+   * Returns the same angle but with a supplied yaw component
+   */
+  public withYaw(yaw: number): Euler {
+    return EulerUtils.withYaw(this, yaw)
+  }
+
+  /**
+   * Returns the same angle but with a supplied roll component
+   */
+  public withRoll(roll: number): Euler {
+    return EulerUtils.withRoll(this, roll)
   }
 }

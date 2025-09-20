@@ -139,6 +139,18 @@ export class Vector3Utils {
   public static lookAt(a: Vector, b: Vector): Euler {
     return Vector3Utils.directionTowards(a, b).eulerAngles
   }
+
+  public static withX(vector: Vector, x: number): Vec3 {
+    return new Vec3(x, vector.y, vector.z)
+  }
+
+  public static withY(vector: Vector, y: number): Vec3 {
+    return new Vec3(vector.x, y, vector.z)
+  }
+
+  public static withZ(vector: Vector, z: number): Vec3 {
+    return new Vec3(vector.x, vector.y, z)
+  }
 }
 
 export class Vec3 {
@@ -177,6 +189,9 @@ export class Vec3 {
     return Vector3Utils.length2DSquared(this)
   }
 
+  /**
+   * Normalizes the vector (Dividing the vector by its length to have the length be equal to 1 e.g. [0.0, 0.666, 0.333])
+   */
   public get normal(): Vec3 {
     return Vector3Utils.normalize(this)
   }
@@ -185,10 +200,16 @@ export class Vec3 {
     return Vector3Utils.inverse(this)
   }
 
+  /**
+   * Floor (Round down) each vector component
+   */
   public get floored(): Vec3 {
     return Vector3Utils.floor(this)
   }
 
+  /**
+   * Calculates the angles from a forward vector
+   */
   public get eulerAngles(): Euler {
     return Vector3Utils.vectorAngles(this)
   }
@@ -221,6 +242,9 @@ export class Vec3 {
       : Vector3Utils.multiply(this, scaleOrVector)
   }
 
+  /**
+   * Alias for Vec3.scale
+   */
   public multiply(vector: Vector): Vec3
   public multiply(scale: number): Vec3
   public multiply(scaleOrVector: Vector | number): Vec3 {
@@ -245,18 +269,46 @@ export class Vec3 {
     return Vector3Utils.distanceSquared(this, vector)
   }
 
+  /**
+   * Linearly interpolates the vector to a point based on a 0.0-1.0 fraction
+   * Clamp limits the fraction to [0,1]
+   */
   public lerpTo(vector: Vector, fraction: number, clamp: boolean = true): Vec3 {
-    return Vector3Utils.lerp(this, vector, fraction)
+    return Vector3Utils.lerp(this, vector, fraction, clamp)
   }
 
   /**
    * Gets the normalized direction vector pointing towards specified point (subtracting two vectors)
    */
-  public directionTowards(vector: Vector) {
+  public directionTowards(vector: Vector): Vec3 {
     return Vector3Utils.directionTowards(this, vector)
   }
 
-  public lookAt(vector: Vector) {
+  /**
+   * Returns an angle pointing towards a point from the current vector
+   */
+  public lookAt(vector: Vector): Euler {
     return Vector3Utils.lookAt(this, vector)
+  }
+
+  /**
+   * Returns the same vector but with a supplied X component
+   */
+  public withX(x: number): Vec3 {
+    return Vector3Utils.withX(this, x)
+  }
+
+  /**
+   * Returns the same vector but with a supplied Y component
+   */
+  public withY(y: number): Vec3 {
+    return Vector3Utils.withY(this, y)
+  }
+
+  /**
+   * Returns the same vector but with a supplied Z component
+   */
+  public withZ(z: number): Vec3 {
+    return Vector3Utils.withY(this, z)
   }
 }
