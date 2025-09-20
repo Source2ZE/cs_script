@@ -499,12 +499,7 @@
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
 "@s2ze/tsconfig@file:packages/tsconfig":
-  version "1.1.0"
-  dependencies:
-    "@s2ze/types" "file:../Users/ADMIN/AppData/Local/Yarn/Cache/v6/npm-@s2ze-tsconfig-1.1.0-f36a6b68-9ad2-4a14-98e2-417c319004e1-1758226304444/node_modules/@s2ze/types"
-
-"@s2ze/types@file:packages/types":
-  version "1.1.0"
+  version "1.8.0"
 
 "@sigstore/bundle@^2.3.2":
   version "2.3.2"

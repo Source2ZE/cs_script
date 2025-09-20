@@ -5,7 +5,10 @@
   "license": "MIT",
   "author": "Source2ZE",
   "types": "build/index.d.ts",
-  "main": "build/index.js",
+  "main": "./build/index.js",
+  "exports": {
+    ".": "./build/index.js"
+  },
   "type": "module",
   "devDependencies": {
     "@s2ze/tsconfig": "file:../tsconfig"

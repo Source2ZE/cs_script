@@ -4,9 +4,31 @@
   "description": "Valve provided type definitions for CS2 scripting",
   "license": "MIT",
   "author": "Source2ZE",
-  "types": "index.d.ts",
+  "types": "build/autoimport/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "types": "./build/index.d.ts"
+    },
+    "./autoimport": {
+      "import": "./build/autoimport/index.js",
+      "types": "./build/autoimport/index.d.ts"
+    },
+    "./autoimport/extended": {
+      "import": "./build/autoimport/extended/index.js",
+      "types": "./build/autoimport/extended/index.d.ts"
+    }
+  },
+  "type": "module",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@s2ze/tsconfig": "file:../tsconfig"
   }
 }
