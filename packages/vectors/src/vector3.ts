@@ -151,9 +151,9 @@ export class Vec3 {
       : Vector3Utils.multiply(this, scaleOrVector)
   }
 
-  public multiple(vector: Vector): Vec3
-  public multiple(scale: number): Vec3
-  public multiple(scaleOrVector: Vector | number): Vec3 {
+  public multiply(vector: Vector): Vec3
+  public multiply(scale: number): Vec3
+  public multiply(scaleOrVector: Vector | number): Vec3 {
     return typeof scaleOrVector === 'number'
       ? Vector3Utils.scale(this, scaleOrVector)
       : Vector3Utils.multiply(this, scaleOrVector)
