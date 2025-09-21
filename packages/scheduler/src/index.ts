@@ -23,7 +23,7 @@ let tasks: Task[] = []
 export function setTimeout(callback: Function, ms: number): number {
   const id = idPool++
 
-  tasks.push({
+  tasks.unshift({
     id,
     repeated: false,
     atSeconds: Instance.GetGameTime() + ms / 1000,
@@ -36,7 +36,7 @@ export function setTimeout(callback: Function, ms: number): number {
 export function setInterval(callback: Function, ms: number): number {
   const id = idPool++
 
-  tasks.push({
+  tasks.unshift({
     id,
     repeated: true,
     everyNSeconds: ms / 1000,
