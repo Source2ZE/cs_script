@@ -102,7 +102,6 @@ export class Vector3Utils {
       else pitch = 90
     } else {
       yaw = Math.atan2(vector.y, vector.x) * RAD_TO_DEG
-
       pitch = Math.atan2(-vector.z, Vector3Utils.length2D(vector)) * RAD_TO_DEG
     }
 
