@@ -11,7 +11,7 @@ function lineMap(value: PrintArgument) {
     if (!value.IsValid()) return `<Invalid entity handle>`
 
     const name = value.GetEntityName()
-    return `<${value.GetClassName()}${name ? ` (${name})` : ''}: ${JSON.stringify(value, null, 2)}`
+    return `<${value.GetClassName()}>${name ? ` (${name})` : ''}: ${JSON.stringify(value, null, 2)}`
   }
 
   return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
