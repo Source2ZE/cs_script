@@ -1,6 +1,6 @@
 import { Entity, Instance } from 'cs_script/point_script'
 
-type PrintArgument = string | object | any[] | null | undefined
+type PrintArgument = string | object | any[] | null | undefined | boolean
 
 function lineMap(value: PrintArgument) {
   if (value === null) return '<null>'
