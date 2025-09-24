@@ -1,10 +1,18 @@
 import { GameEventDefs, Instance } from 'cs_script/point_script'
 
 let errors = []
-function printError(e: Error) {
-  Instance.Msg(
-    `\n================== ERROR ==================\n${e.message}\n\n${e.stack}\n===========================================\n`
-  )
+function printError(e: any) {
+  let msg = ''
+  if (e instanceof Error) {
+    Instance.Msg(
+      `\n================== ERROR ==================\n${e.message}\n\n${e.stack}\n===========================================\n`
+    )
+    msg = e.message
+  } else {
+    msg = typeof e === 'string' ? e : JSON.stringify(e, null, 2)
+    Instance.Msg(msg)
+  }
+
   const offset = errors.findIndex((t) => t < Date.now() - 2000)
 
   if (errors.length > 100) return
@@ -15,7 +23,7 @@ function printError(e: Error) {
     errors.push(Date.now())
   }
   Instance.DebugScreenText(
-    `Error: ${e.message}`,
+    `Error: ${msg}`,
     10,
     250 + (offset === -1 ? errors.length : offset) * 15,
     2,
