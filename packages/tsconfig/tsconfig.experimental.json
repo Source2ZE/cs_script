@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.extended.json",
+  "compilerOptions": {
+    "types": [
+      "@s2ze/types/autoimport",
+      "@s2ze/types/autoimport/extended",
+      "@s2ze/types/autoimport/extended/experimental"
+    ]
+  }
+}

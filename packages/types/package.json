@@ -17,6 +17,10 @@
     "./autoimport/extended": {
       "import": "./build/autoimport/extended/index.js",
       "types": "./build/autoimport/extended/index.d.ts"
+    },
+    "./autoimport/extended/experimental": {
+      "import": "./build/autoimport/extended/experimental.js",
+      "types": "./build/autoimport/extended/experimental.d.ts"
     }
   },
   "type": "module",
