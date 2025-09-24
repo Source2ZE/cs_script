@@ -2,21 +2,12 @@ import { Instance } from 'cs_script/point_script'
 
 let idPool = 0
 
-interface TaskBase {
+interface Task {
   id: number
   callback: Function
   atSeconds: number
+  everyNSeconds?: number
 }
-
-interface TaskRepeated extends TaskBase {
-  repeated: false
-}
-interface TaskSingle extends TaskBase {
-  everyNSeconds: number
-  repeated: true
-}
-
-type Task = TaskRepeated | TaskSingle
 
 let tasks: Task[] = []
 
@@ -25,7 +16,6 @@ export function setTimeout(callback: Function, ms: number): number {
 
   tasks.unshift({
     id,
-    repeated: false,
     atSeconds: Instance.GetGameTime() + ms / 1000,
     callback,
   })
@@ -38,7 +28,6 @@ export function setInterval(callback: Function, ms: number): number {
 
   tasks.unshift({
     id,
-    repeated: true,
     everyNSeconds: ms / 1000,
     atSeconds: Instance.GetGameTime() + ms / 1000,
     callback,
@@ -62,7 +51,7 @@ export function runSchedulerTick() {
     const task = tasks[i]
 
     if (Instance.GetGameTime() < task.atSeconds) continue
-    if (!task.repeated) tasks.splice(i, 1)
+    if (task.everyNSeconds === undefined) tasks.splice(i, 1)
     else task.atSeconds = Instance.GetGameTime() + task.everyNSeconds
 
     try {
