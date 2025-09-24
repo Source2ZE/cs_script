@@ -1,6 +1,7 @@
 declare module 'cs_script/point_script' {
   interface EntityClassMap {
-    player: CSPlayerPawn | CSObserverPawn
+    player: CSPlayerPawn
+    observer: CSObserverPawn
     cs_player_controller: CSPlayerController
     [key: `weapon_${string}`]: CSWeaponBase
   }
