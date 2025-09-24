@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": ["@s2ze/types/autoimport"]
+    "types": ["@s2ze/types/autoimport", "@s2ze/types/autoimport/extended"]
   }
 }
