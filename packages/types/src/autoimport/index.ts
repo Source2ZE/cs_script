@@ -95,7 +95,7 @@ declare module "cs_script/point_script"
     type InputData = { value?: InputValue, caller?: Entity, activator?: Entity };
     interface TraceConfig {
         ignoreEnt?: Entity, // Set to ignore collisions with an entity, typically the source of a trace
-        interacts?: TraceInteracts, // Defaults to trace against any solid
+        interacts?: import('../index').TraceInteracts, // Defaults to trace against any solid
         sphereRadius?: number; // Set to trace a sphere with specified radius
     }
     interface TraceResult {
@@ -104,36 +104,6 @@ declare module "cs_script/point_script"
         didHit: boolean;
         normal: Vector;
         hitEnt?: Entity;
-    }
-
-    enum CSWeaponType {
-        KNIFE = 0,
-        PISTOL = 1,
-        SUBMACHINEGUN = 2,
-        RIFLE = 3,
-        SHOTGUN = 4,
-        SNIPER_RIFLE = 5,
-        MACHINEGUN = 6,
-        C4 = 7,
-        TASER = 8,
-        GRENADE = 9,
-        EQUIPMENT = 10,
-        STACKABLEITEM = 11,
-        UNKNOWN = 12
-    }
-
-    enum CSGearSlot {
-        INVALID = -1,
-        RIFLE = 0,
-        PISTOL = 1,
-        KNIFE = 2,
-        GRENADES = 3,
-        C4 = 4
-    }
-
-    enum TraceInteracts {
-        SOLID = 0,
-        WORLD = 1,
     }
 
     export class Entity {
@@ -175,7 +145,7 @@ declare module "cs_script/point_script"
 
     export class CSWeaponData {
         GetName(): string;
-        GetType(): CSWeaponType;
+        GetType(): import('../index').CSWeaponType;
         GetPrice(): number;
     }
 
@@ -209,7 +179,7 @@ declare module "cs_script/point_script"
         /** Gets the controller that this player pawn was originally spawned for. */
         GetOriginalPlayerController(): CSPlayerController;
         FindWeapon(name: string): CSWeaponBase | undefined;
-        FindWeaponBySlot(slot: CSGearSlot): CSWeaponBase | undefined;
+        FindWeaponBySlot(slot: import('../index').CSGearSlot): CSWeaponBase | undefined;
         GetActiveWeapon(): CSWeaponBase | undefined;
         DestroyWeapon(target: CSWeaponBase): void;
         DestroyWeapons(): void;

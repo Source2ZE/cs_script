@@ -12,6 +12,7 @@
   "scripts": {
     "build": "lerna run build",
     "lerna:publish": "yarn lerna run build && lerna publish --no-private",
+    "republish": "lerna exec -- npm publish",
     "lint": "prettier . --write"
   },
   "type": "module"
