@@ -176,8 +176,8 @@ export class Euler {
       this.roll = pitchOrAngle.roll
     } else {
       this.pitch = pitchOrAngle
-      this.yaw = yaw
-      this.roll = roll
+      this.yaw = yaw!
+      this.roll = roll!
     }
   }
 

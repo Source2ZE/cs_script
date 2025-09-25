@@ -167,8 +167,8 @@ export class Vec3 {
       this.z = xOrVector.z
     } else {
       this.x = xOrVector
-      this.y = y
-      this.z = z
+      this.y = y!
+      this.z = z!
     }
   }
 
