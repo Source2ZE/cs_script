@@ -12,12 +12,12 @@ declare module 'cs_script/point_script' {
     ): EntityClassMap[T] | undefined
     FindEntitiesByClass<T extends keyof EntityClassMap>(
       className: T
-    ): EntityClassMap[T][] | undefined
+    ): EntityClassMap[T][]
 
     FindEntityByClass<T extends Entity>(className: string): T | undefined
-    FindEntitiesByClass<T extends Entity>(className: string): T[] | undefined
+    FindEntitiesByClass<T extends Entity>(className: string): T[]
 
     FindEntityByName<T extends Entity>(className: string): T | undefined
-    FindEntitiesByName<T extends Entity>(className: string): T[] | undefined
+    FindEntitiesByName<T extends Entity>(className: string): T[]
   }
 }
