@@ -29,8 +29,3 @@ export enum CSGearSlot {
   GRENADES = 3,
   C4 = 4,
 }
-
-export enum TraceInteracts {
-  SOLID = 0,
-  WORLD = 1,
-}
