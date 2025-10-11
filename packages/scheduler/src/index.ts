@@ -46,6 +46,11 @@ export function clearTimeout(id: number): void {
 
 export const clearInterval = clearTimeout
 
+export function clearTasks()
+{
+  tasks = [];
+}
+
 export function runSchedulerTick() {
   for (let i = tasks.length - 1; i >= 0; i--) {
     const task = tasks[i]
