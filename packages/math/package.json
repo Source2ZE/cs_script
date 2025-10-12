@@ -11,14 +11,17 @@
   },
   "type": "module",
   "devDependencies": {
-    "@s2ze/tsconfig": "file:../tsconfig"
+    "@s2ze/tsconfig": "file:../tsconfig",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "build": "tsc -p tsconfig.release.json",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
   }
 }

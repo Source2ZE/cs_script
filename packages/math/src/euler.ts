@@ -171,13 +171,13 @@ export class Euler {
   constructor(angle: QAngle)
   constructor(pitchOrAngle: number | QAngle, yaw?: number, roll?: number) {
     if (typeof pitchOrAngle === 'object') {
-      this.pitch = pitchOrAngle.pitch
-      this.yaw = pitchOrAngle.yaw
-      this.roll = pitchOrAngle.roll
+      this.pitch = pitchOrAngle.pitch === 0 ? 0 : pitchOrAngle.pitch
+      this.yaw = pitchOrAngle.yaw === 0 ? 0 : pitchOrAngle.yaw
+      this.roll = pitchOrAngle.roll === 0 ? 0 : pitchOrAngle.roll
     } else {
-      this.pitch = pitchOrAngle
-      this.yaw = yaw!
-      this.roll = roll!
+      this.pitch = pitchOrAngle === 0 ? pitchOrAngle : pitchOrAngle
+      this.yaw = yaw === 0 ? 0 : yaw!
+      this.roll = roll === 0 ? 0 : roll!
     }
   }
 

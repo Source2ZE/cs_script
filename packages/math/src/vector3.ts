@@ -26,12 +26,15 @@ export class Vector3Utils {
 
   public static divide(vector: Vector, divider: Vector | number): Vec3 {
     if (typeof divider === 'number') {
+      if (divider === 0) throw Error('Division by zero')
       return new Vec3(
         vector.x / divider,
         vector.y / divider,
         vector.z / divider
       )
     } else {
+      if (divider.x === 0 || divider.y === 0 || divider.z === 0)
+        throw Error('Division by zero')
       return new Vec3(
         vector.x / divider.x,
         vector.y / divider.y,
@@ -162,13 +165,13 @@ export class Vec3 {
   constructor(vector: Vector)
   constructor(xOrVector: number | Vector, y?: number, z?: number) {
     if (typeof xOrVector === 'object') {
-      this.x = xOrVector.x
-      this.y = xOrVector.y
-      this.z = xOrVector.z
+      this.x = xOrVector.x === 0 ? 0 : xOrVector.x
+      this.y = xOrVector.y === 0 ? 0 : xOrVector.y
+      this.z = xOrVector.z === 0 ? 0 : xOrVector.z
     } else {
-      this.x = xOrVector
-      this.y = y!
-      this.z = z!
+      this.x = xOrVector === 0 ? 0 : xOrVector
+      this.y = y === 0 ? 0 : y!
+      this.z = z === 0 ? 0 : z!
     }
   }
 
@@ -229,7 +232,7 @@ export class Vec3 {
     return Vector3Utils.subtract(this, vector)
   }
 
-  public divide(vector: Vector): Vec3 {
+  public divide(vector: Vector | number): Vec3 {
     return Vector3Utils.divide(this, vector)
   }
 
@@ -308,6 +311,6 @@ export class Vec3 {
    * Returns the same vector but with a supplied Z component
    */
   public withZ(z: number): Vec3 {
-    return Vector3Utils.withY(this, z)
+    return Vector3Utils.withZ(this, z)
   }
 }
