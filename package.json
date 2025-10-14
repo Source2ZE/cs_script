@@ -4,16 +4,19 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@biomejs/biome": "^2.2.6"
+  },
   "devDependencies": {
     "lerna": "^8.2.4",
-    "prettier": "^3.6.2"
+    "typescript": "5.9.3"
   },
   "scripts": {
     "build": "lerna run build",
     "lerna:publish": "yarn lerna run build && yarn lerna run test && lerna publish --no-private",
     "republish": "lerna exec -- npm publish",
-    "lint": "prettier . --write"
+    "format": "biome check --write",
+    "lint": "biome lint"
   },
   "type": "module"
 }

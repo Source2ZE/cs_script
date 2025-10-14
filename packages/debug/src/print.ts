@@ -1,4 +1,4 @@
-import { Entity, Instance } from 'cs_script/point_script'
+import { Entity, Instance } from 'cs_script/point_script';
 
 type PrintArgument =
   | string
@@ -9,23 +9,23 @@ type PrintArgument =
   | boolean
   | number
   | bigint
-  | symbol
+  | symbol;
 
 function lineMap(value: PrintArgument) {
-  if (value === null) return '<null>'
+  if (value === null) return '<null>';
 
-  if (value === undefined) return '<undefined>'
+  if (value === undefined) return '<undefined>';
 
   if (value instanceof Entity) {
-    if (!value.IsValid()) return `<Invalid entity handle>`
+    if (!value.IsValid()) return `<Invalid entity handle>`;
 
-    const name = value.GetEntityName()
-    return `<${value.GetClassName()}>${name ? ` (${name})` : ''}: ${JSON.stringify(value, null, 2)}`
+    const name = value.GetEntityName();
+    return `<${value.GetClassName()}>${name ? ` (${name})` : ''}: ${JSON.stringify(value, null, 2)}`;
   }
 
-  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value;
 }
 
 export function print(...args: PrintArgument[]) {
-  Instance.Msg(args.map(lineMap).join(' '))
+  Instance.Msg(args.map(lineMap).join(' '));
 }

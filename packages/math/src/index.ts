@@ -1,3 +1,3 @@
-export * from './vector3'
-export * from './euler'
-export * from './math'
+export * from './euler';
+export * from './math';
+export * from './vector3';
