@@ -1,274 +1,274 @@
-import { Vector } from 'cs_script/point_script'
-import { Euler } from './euler'
-import { RAD_TO_DEG } from './constants'
-import { MathUtils } from './math'
+import type { Vector } from 'cs_script/point_script';
+import { RAD_TO_DEG } from './constants';
+import { Euler } from './euler';
+import { MathUtils } from './math';
 
 export class Vector3Utils {
   public static equals(a: Vector, b: Vector): boolean {
-    return a.x === b.x && a.y === b.y && a.z === b.z
+    return a.x === b.x && a.y === b.y && a.z === b.z;
   }
 
   public static add(a: Vector, b: Vector): Vec3 {
-    return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z)
+    return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
   }
 
   public static subtract(a: Vector, b: Vector): Vec3 {
-    return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z)
+    return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
   }
 
   public static scale(vector: Vector, scale: number): Vec3 {
-    return new Vec3(vector.x * scale, vector.y * scale, vector.z * scale)
+    return new Vec3(vector.x * scale, vector.y * scale, vector.z * scale);
   }
 
   public static multiply(a: Vector, b: Vector): Vec3 {
-    return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z)
+    return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
   }
 
   public static divide(vector: Vector, divider: Vector | number): Vec3 {
     if (typeof divider === 'number') {
-      if (divider === 0) throw Error('Division by zero')
+      if (divider === 0) throw Error('Division by zero');
       return new Vec3(
         vector.x / divider,
         vector.y / divider,
-        vector.z / divider
-      )
+        vector.z / divider,
+      );
     } else {
       if (divider.x === 0 || divider.y === 0 || divider.z === 0)
-        throw Error('Division by zero')
+        throw Error('Division by zero');
       return new Vec3(
         vector.x / divider.x,
         vector.y / divider.y,
-        vector.z / divider.z
-      )
+        vector.z / divider.z,
+      );
     }
   }
 
   public static length(vector: Vector): number {
-    return Math.sqrt(Vector3Utils.lengthSquared(vector))
+    return Math.sqrt(Vector3Utils.lengthSquared(vector));
   }
 
   public static lengthSquared(vector: Vector): number {
-    return vector.x ** 2 + vector.y ** 2 + vector.z ** 2
+    return vector.x ** 2 + vector.y ** 2 + vector.z ** 2;
   }
 
   public static length2D(vector: Vector): number {
-    return Math.sqrt(Vector3Utils.length2DSquared(vector))
+    return Math.sqrt(Vector3Utils.length2DSquared(vector));
   }
 
   public static length2DSquared(vector: Vector): number {
-    return vector.x ** 2 + vector.y ** 2
+    return vector.x ** 2 + vector.y ** 2;
   }
 
   public static normalize(vector: Vector): Vec3 {
-    const length = Vector3Utils.length(vector)
-    return length ? Vector3Utils.divide(vector, length) : Vec3.Zero
+    const length = Vector3Utils.length(vector);
+    return length ? Vector3Utils.divide(vector, length) : Vec3.Zero;
   }
 
   public static dot(a: Vector, b: Vector): number {
-    return a.x * b.x + a.y * b.y + a.z * b.z
+    return a.x * b.x + a.y * b.y + a.z * b.z;
   }
 
   public static cross(a: Vector, b: Vector): Vec3 {
     return new Vec3(
       a.y * b.z - a.z * b.y,
       a.z * b.x - a.x * b.z,
-      a.x * b.y - a.y * b.x
-    )
+      a.x * b.y - a.y * b.x,
+    );
   }
 
   public static inverse(vector: Vector): Vec3 {
-    return new Vec3(-vector.x, -vector.y, -vector.z)
+    return new Vec3(-vector.x, -vector.y, -vector.z);
   }
 
   public static distance(a: Vector, b: Vector): number {
-    return Vector3Utils.subtract(a, b).length
+    return Vector3Utils.subtract(a, b).length;
   }
 
   public static distanceSquared(a: Vector, b: Vector): number {
-    return Vector3Utils.subtract(a, b).lengthSquared
+    return Vector3Utils.subtract(a, b).lengthSquared;
   }
 
   public static floor(vector: Vector): Vec3 {
     return new Vec3(
       Math.floor(vector.x),
       Math.floor(vector.y),
-      Math.floor(vector.z)
-    )
+      Math.floor(vector.z),
+    );
   }
 
   public static vectorAngles(vector: Vector): Euler {
-    let yaw = 0
-    let pitch = 0
+    let yaw = 0;
+    let pitch = 0;
 
     if (!vector.y && !vector.x) {
-      if (vector.z > 0) pitch = -90
-      else pitch = 90
+      if (vector.z > 0) pitch = -90;
+      else pitch = 90;
     } else {
-      yaw = Math.atan2(vector.y, vector.x) * RAD_TO_DEG
-      pitch = Math.atan2(-vector.z, Vector3Utils.length2D(vector)) * RAD_TO_DEG
+      yaw = Math.atan2(vector.y, vector.x) * RAD_TO_DEG;
+      pitch = Math.atan2(-vector.z, Vector3Utils.length2D(vector)) * RAD_TO_DEG;
     }
 
     return new Euler({
       pitch,
       yaw,
       roll: 0,
-    })
+    });
   }
 
   public static lerp(
     a: Vector,
     b: Vector,
     fraction: number,
-    clamp: boolean = true
+    clamp: boolean = true,
   ): Vec3 {
-    let t = fraction
+    let t = fraction;
     if (clamp) {
-      t = MathUtils.clamp(t, 0, 1)
+      t = MathUtils.clamp(t, 0, 1);
     }
 
     // a + (b - a) * t
     return new Vec3(
       a.x + (b.x - a.x) * t,
       a.y + (b.y - a.y) * t,
-      a.z + (b.z - a.z) * t
-    )
+      a.z + (b.z - a.z) * t,
+    );
   }
 
   public static directionTowards(a: Vector, b: Vector) {
-    return Vector3Utils.subtract(b, a).normal
+    return Vector3Utils.subtract(b, a).normal;
   }
 
   public static lookAt(a: Vector, b: Vector): Euler {
-    return Vector3Utils.directionTowards(a, b).eulerAngles
+    return Vector3Utils.directionTowards(a, b).eulerAngles;
   }
 
   public static withX(vector: Vector, x: number): Vec3 {
-    return new Vec3(x, vector.y, vector.z)
+    return new Vec3(x, vector.y, vector.z);
   }
 
   public static withY(vector: Vector, y: number): Vec3 {
-    return new Vec3(vector.x, y, vector.z)
+    return new Vec3(vector.x, y, vector.z);
   }
 
   public static withZ(vector: Vector, z: number): Vec3 {
-    return new Vec3(vector.x, vector.y, z)
+    return new Vec3(vector.x, vector.y, z);
   }
 }
 
 export class Vec3 {
-  public x: number
-  public y: number
-  public z: number
-  public static Zero = new Vec3(0, 0, 0)
+  public x: number;
+  public y: number;
+  public z: number;
+  public static Zero = new Vec3(0, 0, 0);
 
-  constructor(x: number, y: number, z: number)
-  constructor(vector: Vector)
+  constructor(x: number, y: number, z: number);
+  constructor(vector: Vector);
   constructor(xOrVector: number | Vector, y?: number, z?: number) {
     if (typeof xOrVector === 'object') {
-      this.x = xOrVector.x === 0 ? 0 : xOrVector.x
-      this.y = xOrVector.y === 0 ? 0 : xOrVector.y
-      this.z = xOrVector.z === 0 ? 0 : xOrVector.z
+      this.x = xOrVector.x === 0 ? 0 : xOrVector.x;
+      this.y = xOrVector.y === 0 ? 0 : xOrVector.y;
+      this.z = xOrVector.z === 0 ? 0 : xOrVector.z;
     } else {
-      this.x = xOrVector === 0 ? 0 : xOrVector
-      this.y = y === 0 ? 0 : y!
-      this.z = z === 0 ? 0 : z!
+      this.x = xOrVector === 0 ? 0 : xOrVector;
+      this.y = y === 0 ? 0 : y!;
+      this.z = z === 0 ? 0 : z!;
     }
   }
 
   public get length(): number {
-    return Vector3Utils.length(this)
+    return Vector3Utils.length(this);
   }
 
   public get lengthSquared(): number {
-    return Vector3Utils.lengthSquared(this)
+    return Vector3Utils.lengthSquared(this);
   }
 
   public get length2D(): number {
-    return Vector3Utils.length2D(this)
+    return Vector3Utils.length2D(this);
   }
 
   public get length2DSquared(): number {
-    return Vector3Utils.length2DSquared(this)
+    return Vector3Utils.length2DSquared(this);
   }
 
   /**
    * Normalizes the vector (Dividing the vector by its length to have the length be equal to 1 e.g. [0.0, 0.666, 0.333])
    */
   public get normal(): Vec3 {
-    return Vector3Utils.normalize(this)
+    return Vector3Utils.normalize(this);
   }
 
   public get inverse(): Vec3 {
-    return Vector3Utils.inverse(this)
+    return Vector3Utils.inverse(this);
   }
 
   /**
    * Floor (Round down) each vector component
    */
   public get floored(): Vec3 {
-    return Vector3Utils.floor(this)
+    return Vector3Utils.floor(this);
   }
 
   /**
    * Calculates the angles from a forward vector
    */
   public get eulerAngles(): Euler {
-    return Vector3Utils.vectorAngles(this)
+    return Vector3Utils.vectorAngles(this);
   }
 
   public toString(): string {
-    return `Vec3: [${this.x}, ${this.y}, ${this.z}]`
+    return `Vec3: [${this.x}, ${this.y}, ${this.z}]`;
   }
 
   public equals(vector: Vector): boolean {
-    return Vector3Utils.equals(this, vector)
+    return Vector3Utils.equals(this, vector);
   }
 
   public add(vector: Vector): Vec3 {
-    return Vector3Utils.add(this, vector)
+    return Vector3Utils.add(this, vector);
   }
 
   public subtract(vector: Vector): Vec3 {
-    return Vector3Utils.subtract(this, vector)
+    return Vector3Utils.subtract(this, vector);
   }
 
   public divide(vector: Vector | number): Vec3 {
-    return Vector3Utils.divide(this, vector)
+    return Vector3Utils.divide(this, vector);
   }
 
-  public scale(vector: Vector): Vec3
-  public scale(scale: number): Vec3
+  public scale(vector: Vector): Vec3;
+  public scale(scale: number): Vec3;
   public scale(scaleOrVector: Vector | number): Vec3 {
     return typeof scaleOrVector === 'number'
       ? Vector3Utils.scale(this, scaleOrVector)
-      : Vector3Utils.multiply(this, scaleOrVector)
+      : Vector3Utils.multiply(this, scaleOrVector);
   }
 
   /**
    * Alias for Vec3.scale
    */
-  public multiply(vector: Vector): Vec3
-  public multiply(scale: number): Vec3
+  public multiply(vector: Vector): Vec3;
+  public multiply(scale: number): Vec3;
   public multiply(scaleOrVector: Vector | number): Vec3 {
     return typeof scaleOrVector === 'number'
       ? Vector3Utils.scale(this, scaleOrVector)
-      : Vector3Utils.multiply(this, scaleOrVector)
+      : Vector3Utils.multiply(this, scaleOrVector);
   }
 
   public dot(vector: Vector): number {
-    return Vector3Utils.dot(this, vector)
+    return Vector3Utils.dot(this, vector);
   }
 
   public cross(vector: Vector): Vec3 {
-    return Vector3Utils.cross(this, vector)
+    return Vector3Utils.cross(this, vector);
   }
 
   public distance(vector: Vector): number {
-    return Vector3Utils.distance(this, vector)
+    return Vector3Utils.distance(this, vector);
   }
 
   public distanceSquared(vector: Vector): number {
-    return Vector3Utils.distanceSquared(this, vector)
+    return Vector3Utils.distanceSquared(this, vector);
   }
 
   /**
@@ -276,41 +276,41 @@ export class Vec3 {
    * Clamp limits the fraction to [0,1]
    */
   public lerpTo(vector: Vector, fraction: number, clamp: boolean = true): Vec3 {
-    return Vector3Utils.lerp(this, vector, fraction, clamp)
+    return Vector3Utils.lerp(this, vector, fraction, clamp);
   }
 
   /**
    * Gets the normalized direction vector pointing towards specified point (subtracting two vectors)
    */
   public directionTowards(vector: Vector): Vec3 {
-    return Vector3Utils.directionTowards(this, vector)
+    return Vector3Utils.directionTowards(this, vector);
   }
 
   /**
    * Returns an angle pointing towards a point from the current vector
    */
   public lookAt(vector: Vector): Euler {
-    return Vector3Utils.lookAt(this, vector)
+    return Vector3Utils.lookAt(this, vector);
   }
 
   /**
    * Returns the same vector but with a supplied X component
    */
   public withX(x: number): Vec3 {
-    return Vector3Utils.withX(this, x)
+    return Vector3Utils.withX(this, x);
   }
 
   /**
    * Returns the same vector but with a supplied Y component
    */
   public withY(y: number): Vec3 {
-    return Vector3Utils.withY(this, y)
+    return Vector3Utils.withY(this, y);
   }
 
   /**
    * Returns the same vector but with a supplied Z component
    */
   public withZ(z: number): Vec3 {
-    return Vector3Utils.withZ(this, z)
+    return Vector3Utils.withZ(this, z);
   }
 }

@@ -5,6 +5,9 @@ export enum Team {
   CT = 3,
 }
 
+/**
+ * @deprecated cs_script/point_script now exports this enum, use that instead
+ */
 export enum CSWeaponType {
   KNIFE = 0,
   PISTOL = 1,
@@ -21,6 +24,9 @@ export enum CSWeaponType {
   UNKNOWN = 12,
 }
 
+/**
+ * @deprecated cs_script/point_script now exports this enum, use that instead
+ */
 export enum CSGearSlot {
   INVALID = -1,
   RIFLE = 0,
