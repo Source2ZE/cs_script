@@ -91,7 +91,7 @@ declare module "cs_script/point_script"
          * Called when a CSPlayerPawn is about to take damage
          * @param callback
          * Return `{ damage: N }` to modify the amount of damage. Armor and hitgroup modifications will be applied to this new value.
-         * Return `{ aborted: true }` to cancel the damage event.
+         * Return `{ abort: true }` to cancel the damage event.
          */
         OnBeforePlayerDamage(callback: (event: BeforePlayerDamageEvent) => BeforePlayerDamageModify | { abort: true } | void): void;
         /**
@@ -102,7 +102,7 @@ declare module "cs_script/point_script"
         OnPlayerKill(callback: (event: { player: CSPlayerPawn, inflictor?: Entity, attacker?: Entity, weapon?: CSWeaponBase }) => void): void;
         /** Called when a player jumps off the ground. */
         OnPlayerJump(callback: (event: { player: CSPlayerPawn }) => void): void;
-        /** Called when a player lands on the ground. */
+        /** Called when a player hits the ground while falling. */
         OnPlayerLand(callback: (event: { player: CSPlayerPawn }) => void): void;
         /** Called when a player sends a chat message. `team` will match they player's team if the message was sent to team chat. */
         OnPlayerChat(callback: (event: { player: CSPlayerController | undefined, text: string, team: number }) => void): void;
@@ -446,8 +446,10 @@ declare module "cs_script/point_script"
         Kill(): void;
         Remove(): void;
 
-        /** @deprecated */
+        /** @deprecated This method will be removed in a future update */
         Teleport(newPosition: Vector | null, newAngles: QAngle | null, newVelocity: Vector | null): void;
+        /** @deprecated This method will be removed in a future update */
+        GetLocalVelcoity(): Vector;
     }
 
     interface EntityDamage {
