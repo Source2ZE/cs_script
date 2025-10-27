@@ -157,7 +157,9 @@ export class Matrix3x4 {
             vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10] + this.m[11]);
     }
 
-    // rotate by the inverse of the matrix
+    /**
+     * Rotates by the inverse of the matrix.
+     */
     public rotateInverseVec3(vec: Vec3): Vec3 {
         return new Vec3(
             vec.x * this.m[0] + vec.y * this.m[4] + vec.z * this.m[8],
@@ -165,7 +167,9 @@ export class Matrix3x4 {
             vec.x * this.m[2] + vec.y * this.m[6] + vec.z * this.m[10])
     }
 
-    // transform vec by the transpose of the matrix, assuming the matrix is orthogonal this is also the inverse
+    /**
+     * Transform vec by the transpose of the matrix, assuming the matrix is orthogonal this is also the inverse.
+     */
     public transformInverseVec3(vec: Vec3): Vec3 {
 
         const vecMy = vec.x - this.m[3];
@@ -215,7 +219,7 @@ export class Matrix3x4 {
     }
 
     /**
-     * used for testing purposes mainly
+     * Used for testing purposes mainly
      */
     public toArray(): Float32Array {
         return this.m;

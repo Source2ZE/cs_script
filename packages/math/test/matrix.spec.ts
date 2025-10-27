@@ -133,7 +133,7 @@ describe('Matrix3x4 class', () => {
 
     describe('matrix multiply 90 deg roll * 100 unit z translation', () => {
         it('checks that matrix multiplication works correctly', () => {
-            
+
             const mat1 = new Matrix3x4();
             mat1.setOrigin(0, 0, 0);
             mat1.setAngles(0, 0, 90);
@@ -146,7 +146,7 @@ describe('Matrix3x4 class', () => {
 
             const multipliedOrigin = multipliedMatrix.getOrigin();
             const multipliedAngles = multipliedMatrix.getAngles();
-            
+
             expect(multipliedOrigin.x).toBeCloseTo(0);
             expect(multipliedOrigin.y).toBeCloseTo(-100);
             expect(multipliedOrigin.z).toBeCloseTo(0);
@@ -155,7 +155,7 @@ describe('Matrix3x4 class', () => {
 
     describe('matrix multiply 90 deg pitch * 90 deg pitch', () => {
         it('checks that matrix multiplication works correctly', () => {
-            
+
             const mat1 = new Matrix3x4();
             mat1.setAngles(90, 0, 0);
 
@@ -165,7 +165,7 @@ describe('Matrix3x4 class', () => {
             const multipliedMatrix = mat1.multiply(mat2);
 
             const multipliedAngles = multipliedMatrix.getAngles();
-            
+
             expect(multipliedAngles.pitch).toBeCloseTo(0);
             expect(multipliedAngles.yaw).toBeCloseTo(180);
             expect(multipliedAngles.roll).toBeCloseTo(180);
@@ -175,7 +175,7 @@ describe('Matrix3x4 class', () => {
     // trust the values bro theyre correct i promise bro
     describe('complex matrices multiplied', () => {
         it('checks that matrix multiplication works correctly', () => {
-            
+
             const mat1 = new Matrix3x4();
             mat1.setAngles(90, 45, 10);
             mat1.setOrigin(10, 20, 30)
@@ -188,7 +188,7 @@ describe('Matrix3x4 class', () => {
 
             const multipliedAngles = multipliedMatrix.getAngles();
             const multipliedOrigin = multipliedMatrix.getOrigin();
-            
+
             expect(multipliedAngles.pitch).toBeCloseTo(54.46864954);
             expect(multipliedAngles.yaw).toBeCloseTo(161.05239010);
             expect(multipliedAngles.roll).toBeCloseTo(170.64234195);
@@ -225,7 +225,7 @@ describe('Matrix3x4 class', () => {
     describe('multiply with scale matrix', () => {
         it('checks that multiplying with scaling matrices is correct', () => {
             const mat1 = Matrix3x4.GetScaleMatrix(2, 4, 8);
-            
+
             const mat2 = new Matrix3x4();
             mat2.setOrigin(50, 100, 200);
             mat2.setAngles(15, 30, 90);
@@ -238,7 +238,7 @@ describe('Matrix3x4 class', () => {
             expect(multipliedOrigin.x).toBeCloseTo(100);
             expect(multipliedOrigin.y).toBeCloseTo(400);
             expect(multipliedOrigin.z).toBeCloseTo(1600);
-            
+
             expect(multipliedAngles.pitch).toBeCloseTo(39.0144672440907);
             expect(multipliedAngles.yaw).toBeCloseTo(49.106604377471776);
             expect(multipliedAngles.roll).toBeCloseTo(90);
