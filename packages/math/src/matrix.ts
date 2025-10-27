@@ -8,7 +8,6 @@ export class Matrix3x4 {
 
     // using a single dimensional array for performance, the matrix indices look like this
     // so column index 3, row index 2 would be array index 11. 
-    // the methods below will do this math for you, but require extra operations so will be used sparingly inside of the implementation
 
     //      0  1  2  3
     //
@@ -16,27 +15,22 @@ export class Matrix3x4 {
     //  1   4  5  6  7
     //  2   8  9  10 11
 
-    private get(row: number, col: number): number {
-        return this.m[row * 4 + col];
-    }
-
-    private set(row: number, col: number, value: number): void {
-        this.m[row * 4 + col] = value;
-    }
-
-    public setIdentity() {
-        this.m.fill(0);
-        this.m[0] = 1;
-        this.m[5] = 1;
-        this.m[10] = 1;
+    public isIdentity(): boolean {
+        return this.equals(Matrix3x4.IdentityMatrix)
     }
 
     public equals(mat2: Matrix3x4, tolerance: number = 1e-5) {
-        for (let i = 0; i < 3; ++i) {
-            for (let j = 0; j < 3; ++j) {
-                if (Math.abs(this.get(i, j) - mat2.get(i, j)) > tolerance)
-                    return false;
-            }
+        for (let i = 0; i < 12; ++i) {
+            if (Math.abs(this.m[i] - mat2.m[i]) > tolerance)
+                return false;
+        }
+        return true;
+    }
+
+    public isValid(): boolean {
+        for (let i = 0; i < 12; i++) {
+            if (!Number.isFinite(this.m[i]))
+                return false;
         }
         return true;
     }
@@ -52,13 +46,7 @@ export class Matrix3x4 {
     }
 
     public getOrigin(): Vec3 {
-        const origin = new Vec3(0, 0, 0)
-
-        origin.x = this.m[3];
-        origin.y = this.m[7];
-        origin.z = this.m[11];
-
-        return origin;
+        return new Vec3(this.m[3], this.m[7], this.m[11])
     }
 
     public setAngles(pitch: number, yaw: number, roll: number) {
@@ -104,7 +92,7 @@ export class Matrix3x4 {
             returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
             returnAngles.roll = Math.atan2(this.m[9], this.m[10]) * RAD_TO_DEG;
         }
-        else	// forward is mostly Z, gimbal lock-
+        else    // gimbal lock
         {
             returnAngles.yaw = Math.atan2(-this.m[1], this.m[5]) * RAD_TO_DEG;
             returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
@@ -112,6 +100,18 @@ export class Matrix3x4 {
         };
 
         return returnAngles;
+    }
+
+    public getForwardVector(): Vec3 {
+        return new Vec3(this.m[0], this.m[4], this.m[8]);
+    }
+
+    public getRightVector(): Vec3 {
+        return new Vec3(this.m[1], this.m[5], this.m[9]);
+    }
+
+    public getUpVector(): Vec3 {
+        return new Vec3(this.m[2], this.m[6], this.m[10]);
     }
 
     public multiply(mat2: Matrix3x4): Matrix3x4 {
@@ -140,29 +140,39 @@ export class Matrix3x4 {
     }
 
     public transformVec3(vec: Vec3): Vec3 {
-        const newVec = new Vec3(0, 0, 0);
-
         // dot products
-        newVec.x = vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2] + this.m[3];
-        newVec.y = vec.x * this.m[4] + vec.y * this.m[5] + vec.z * this.m[6] + this.m[7];
-        newVec.z = vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10] + this.m[11];
+        return new Vec3(vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2] + this.m[3],
+            vec.x * this.m[4] + vec.y * this.m[5] + vec.z * this.m[6] + this.m[7],
+            vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10] + this.m[11]);
+    }
 
-        return newVec;
+    public toString(): string {
+        return `\n           [${this.m[0]}, ${this.m[1]}, ${this.m[2]}, ${this.m[3]}]
+                \nMatrix3_4: [${this.m[4]}, ${this.m[5]}, ${this.m[6]}, ${this.m[7]}]
+                \n           [${this.m[8]}, ${this.m[9]}, ${this.m[10]}, ${this.m[10]}]`
     }
 
     public static GetScaleMatrix(x: number, y: number, z: number): Matrix3x4 {
         const matrix = new Matrix3x4();
 
-        matrix.set(0, 0, x);
-        matrix.set(1, 1, y);
-        matrix.set(2, 2, z);
+        matrix.m[0] = x;
+        matrix.m[5] = y;
+        matrix.m[10] = z;
 
         return matrix;
     }
 
-    public toString(): string {
-        return `\n           [${this.get(0, 0)}, ${this.get(0, 1)}, ${this.get(0, 2)}, ${this.get(0, 3)}]
-                \nMatrix3_4: [${this.get(1, 0)}, ${this.get(1, 1)}, ${this.get(1, 2)}, ${this.get(1, 3)}]
-                \n           [${this.get(2, 0)}, ${this.get(2, 1)}, ${this.get(2, 2)}, ${this.get(2, 3)}]`
+    public static GetIdentityMatrix(): Matrix3x4 {
+
+        const retMat = new Matrix3x4();
+
+        retMat.m.fill(0);
+        retMat.m[0] = 1;
+        retMat.m[5] = 1;
+        retMat.m[10] = 1;
+
+        return retMat;
     }
+
+    public static IdentityMatrix = Matrix3x4.GetIdentityMatrix();
 }
