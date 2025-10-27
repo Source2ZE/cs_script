@@ -1,0 +1,168 @@
+import { Euler } from './euler';
+import { Vec3 } from './vector3';
+import { DEG_TO_RAD, RAD_TO_DEG } from './constants';
+
+export class Matrix3x4 {
+    // no need for constructor as the array is initialised to 0 by default
+    private m: Float32Array = new Float32Array(12);
+
+    // using a single dimensional array for performance, the matrix indices look like this
+    // so column index 3, row index 2 would be array index 11. 
+    // the methods below will do this math for you, but require extra operations so will be used sparingly inside of the implementation
+
+    //      0  1  2  3
+    //
+    //  0   0  1  2  3
+    //  1   4  5  6  7
+    //  2   8  9  10 11
+
+    private get(row: number, col: number): number {
+        return this.m[row * 4 + col];
+    }
+
+    private set(row: number, col: number, value: number): void {
+        this.m[row * 4 + col] = value;
+    }
+
+    public setIdentity() {
+        this.m.fill(0);
+        this.m[0] = 1;
+        this.m[5] = 1;
+        this.m[10] = 1;
+    }
+
+    public equals(mat2: Matrix3x4, tolerance: number = 1e-5) {
+        for (let i = 0; i < 3; ++i) {
+            for (let j = 0; j < 3; ++j) {
+                if (Math.abs(this.get(i, j) - mat2.get(i, j)) > tolerance)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public setOrigin(x: number, y: number, z: number) {
+        this.m[3] = x;
+        this.m[7] = y;
+        this.m[11] = z;
+    }
+
+    public setOriginVec3(origin: Vec3) {
+        this.setOrigin(origin.x, origin.y, origin.y);
+    }
+
+    public getOrigin(): Vec3 {
+        const origin = new Vec3(0, 0, 0)
+
+        origin.x = this.m[3];
+        origin.y = this.m[7];
+        origin.z = this.m[11];
+
+        return origin;
+    }
+
+    public setAngles(pitch: number, yaw: number, roll: number) {
+        const ay = DEG_TO_RAD * yaw;
+        const ax = DEG_TO_RAD * pitch;
+        const az = DEG_TO_RAD * roll;
+
+        const sy = Math.sin(ay), cy = Math.cos(ay);
+        const sp = Math.sin(ax), cp = Math.cos(ax);
+        const sr = Math.sin(az), cr = Math.cos(az);
+
+        this.m[0] = cp * cy;
+        this.m[4] = cp * sy;
+        this.m[8] = -sp;
+
+        const crcy = cr * cy;
+        const crsy = cr * sy;
+        const srcy = sr * cy;
+        const srsy = sr * sy;
+
+        this.m[1] = sp * srcy - crsy;
+        this.m[5] = sp * srsy + crcy;
+        this.m[9] = sr * cp;
+
+        this.m[2] = sp * crcy + srsy;
+        this.m[6] = sp * crsy - srcy;
+        this.m[10] = cr * cp;
+    }
+
+    public setAnglesEuler(angles: Euler) {
+        this.setAngles(angles.pitch, angles.yaw, angles.roll);
+    }
+
+    public getAngles(): Euler {
+        const returnAngles = new Euler(0, 0, 0);
+
+        const forward0 = this.m[0];
+        const forward1 = this.m[4];
+        const xyDist = Math.sqrt(forward0 * forward0 + forward1 * forward1);
+
+        if (xyDist > 0.001) {
+            returnAngles.yaw = Math.atan2(forward1, forward0) * RAD_TO_DEG;
+            returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
+            returnAngles.roll = Math.atan2(this.m[9], this.m[10]) * RAD_TO_DEG;
+        }
+        else	// forward is mostly Z, gimbal lock-
+        {
+            returnAngles.yaw = Math.atan2(-this.m[1], this.m[5]) * RAD_TO_DEG;
+            returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
+            returnAngles.roll = 0.0;
+        };
+
+        return returnAngles;
+    }
+
+    public multiply(mat2: Matrix3x4): Matrix3x4 {
+        const out = new Matrix3x4();
+
+        const m1 = this.m;
+        const m2 = mat2.m;
+        const m3 = out.m;
+
+        m3[0] = m1[0] * m2[0] + m1[1] * m2[4] + m1[2] * m2[8];
+        m3[1] = m1[0] * m2[1] + m1[1] * m2[5] + m1[2] * m2[9];
+        m3[2] = m1[0] * m2[2] + m1[1] * m2[6] + m1[2] * m2[10];
+        m3[3] = m1[0] * m2[3] + m1[1] * m2[7] + m1[2] * m2[11] + m1[3];
+
+        m3[4] = m1[4] * m2[0] + m1[5] * m2[4] + m1[6] * m2[8];
+        m3[5] = m1[4] * m2[1] + m1[5] * m2[5] + m1[6] * m2[9];
+        m3[6] = m1[4] * m2[2] + m1[5] * m2[6] + m1[6] * m2[10];
+        m3[7] = m1[4] * m2[3] + m1[5] * m2[7] + m1[6] * m2[11] + m1[7];
+
+        m3[8] = m1[8] * m2[0] + m1[9] * m2[4] + m1[10] * m2[8];
+        m3[9] = m1[8] * m2[1] + m1[9] * m2[5] + m1[10] * m2[9];
+        m3[10] = m1[8] * m2[2] + m1[9] * m2[6] + m1[10] * m2[10];
+        m3[11] = m1[8] * m2[3] + m1[9] * m2[7] + m1[10] * m2[11] + m1[11];
+
+        return out;
+    }
+
+    public transformVec3(vec: Vec3): Vec3 {
+        const newVec = new Vec3(0, 0, 0);
+
+        // dot products
+        newVec.x = vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2] + this.m[3];
+        newVec.y = vec.x * this.m[4] + vec.y * this.m[5] + vec.z * this.m[6] + this.m[7];
+        newVec.z = vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10] + this.m[11];
+
+        return newVec;
+    }
+
+    public static GetScaleMatrix(x: number, y: number, z: number): Matrix3x4 {
+        const matrix = new Matrix3x4();
+
+        matrix.set(0, 0, x);
+        matrix.set(1, 1, y);
+        matrix.set(2, 2, z);
+
+        return matrix;
+    }
+
+    public toString(): string {
+        return `\n           [${this.get(0, 0)}, ${this.get(0, 1)}, ${this.get(0, 2)}, ${this.get(0, 3)}]
+                \nMatrix3_4: [${this.get(1, 0)}, ${this.get(1, 1)}, ${this.get(1, 2)}, ${this.get(1, 3)}]
+                \n           [${this.get(2, 0)}, ${this.get(2, 1)}, ${this.get(2, 2)}, ${this.get(2, 3)}]`
+    }
+}
