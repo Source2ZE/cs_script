@@ -106,12 +106,24 @@ export class Matrix3x4 {
     return new Vec3(this.m[0], this.m[4], this.m[8]);
   }
 
+  public get backward(): Vec3 {
+    return new Vec3(-this.m[0], -this.m[4], -this.m[8]);
+  }
+
   public get right(): Vec3 {
     return new Vec3(this.m[1], this.m[5], this.m[9]);
   }
 
+  public get left(): Vec3 {
+    return new Vec3(-this.m[1], -this.m[5], -this.m[9]);
+  }
+
   public get up(): Vec3 {
     return new Vec3(this.m[2], this.m[6], this.m[10]);
+  }
+
+  public get down(): Vec3 {
+    return new Vec3(-this.m[2], -this.m[6], -this.m[10]);
   }
 
   public multiply(mat2: Matrix3x4): Matrix3x4 {
