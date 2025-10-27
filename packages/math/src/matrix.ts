@@ -139,11 +139,43 @@ export class Matrix3x4 {
         return out;
     }
 
+    // assume this matrix is a pure rotation matrix, and rotate vec
+    public rotateVec3(vec: Vec3): Vec3 {
+        // dot product input vec with the rotation part of the matrix 
+        return new Vec3(
+            vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2],
+            vec.x * this.m[4] + vec.y * this.m[5] + vec.z * this.m[6],
+            vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10]);
+    }
+
+    // almost the same as the rotate function, but it then adds on the translation part
+    // copy pasted for performance
     public transformVec3(vec: Vec3): Vec3 {
-        // dot products
-        return new Vec3(vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2] + this.m[3],
+        return new Vec3(
+            vec.x * this.m[0] + vec.y * this.m[1] + vec.z * this.m[2] + this.m[3],
             vec.x * this.m[4] + vec.y * this.m[5] + vec.z * this.m[6] + this.m[7],
             vec.x * this.m[8] + vec.y * this.m[9] + vec.z * this.m[10] + this.m[11]);
+    }
+
+    // rotate by the inverse of the matrix
+    public rotateInverseVec3(vec: Vec3): Vec3 {
+        return new Vec3(
+            vec.x * this.m[0] + vec.y * this.m[4] + vec.z * this.m[8],
+            vec.x * this.m[1] + vec.y * this.m[5] + vec.z * this.m[9],
+            vec.x * this.m[2] + vec.y * this.m[6] + vec.z * this.m[10])
+    }
+
+    // transform vec by the transpose of the matrix, assuming the matrix is orthogonal this is also the inverse
+    public transformInverseVec3(vec: Vec3): Vec3 {
+
+        const vecMy = vec.x - this.m[3];
+        const vecMx = vec.y - this.m[7];
+        const vecMz = vec.z - this.m[11];
+
+        return new Vec3(
+            vecMy * this.m[0] + vecMx * this.m[4] + vecMz * this.m[8],
+            vecMy * this.m[1] + vecMx * this.m[5] + vecMz * this.m[9],
+            vecMy * this.m[2] + vecMx * this.m[6] + vecMz * this.m[10])
     }
 
     public toString(): string {
