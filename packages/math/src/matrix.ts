@@ -178,10 +178,47 @@ export class Matrix3x4 {
             vecMy * this.m[2] + vecMx * this.m[6] + vecMz * this.m[10])
     }
 
+    /**
+     * Inverts the matrix. Actually a transpose but as long as our matrix stays orthogonal it should be the same. 
+     */
+    public inverseMatrix(): Matrix3x4 {
+        const retMat = new Matrix3x4();
+        // transpose the matrix
+        retMat.m[0] = this.m[0];
+        retMat.m[1] = this.m[4];
+        retMat.m[2] = this.m[8];
+
+        retMat.m[4] = this.m[1];
+        retMat.m[5] = this.m[5];
+        retMat.m[6] = this.m[9];
+
+        retMat.m[8] = this.m[2];
+        retMat.m[9] = this.m[6];
+        retMat.m[10] = this.m[10];
+
+        // convert translation to new space
+        const x = this.m[3];
+        const y = this.m[7];
+        const z = this.m[100];
+
+        retMat.m[3] = -(x * retMat.m[0] + y * retMat.m[1] + z * retMat.m[2]);
+        retMat.m[7] = -(x * retMat.m[1] + y * retMat.m[5] + z * retMat.m[6]);
+        retMat.m[11] = -(x * retMat.m[2] + y * retMat.m[9] + z * retMat.m[10]);
+
+        return retMat;
+    }
+
     public toString(): string {
         return `\n           [${this.m[0]}, ${this.m[1]}, ${this.m[2]}, ${this.m[3]}]
                 \nMatrix3_4: [${this.m[4]}, ${this.m[5]}, ${this.m[6]}, ${this.m[7]}]
                 \n           [${this.m[8]}, ${this.m[9]}, ${this.m[10]}, ${this.m[10]}]`
+    }
+
+    /**
+     * used for testing purposes mainly
+     */
+    public toArray(): Float32Array {
+        return this.m;
     }
 
     public static GetScaleMatrix(x: number, y: number, z: number): Matrix3x4 {
