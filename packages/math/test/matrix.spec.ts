@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import { Matrix3x4, Vec3 } from '../src';
 
 // matrix layout
-//
+// 
 //      0  1  2  3
 //
 //  0   0  1  2  3
@@ -145,7 +145,6 @@ describe('Matrix3x4 class', () => {
             const multipliedMatrix = mat1.multiply(mat2);
 
             const multipliedOrigin = multipliedMatrix.getOrigin();
-            const multipliedAngles = multipliedMatrix.getAngles();
 
             expect(multipliedOrigin.x).toBeCloseTo(0);
             expect(multipliedOrigin.y).toBeCloseTo(-100);
