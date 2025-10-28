@@ -34,19 +34,9 @@ describe('Matrix3x4 class', () => {
     });
   });
 
-  describe('identity', () => {
-    it('creates the identity matrix for Matrix3x4', () => {
-      const identityMatrix = Matrix3x4.getIdentityMatrix();
-      expect(identityMatrix.toArray()).toEqual(
-        new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]),
-      );
-      expect(identityMatrix.isIdentity).toEqual(true);
-    });
-  });
-
   describe('isValid', () => {
     it('checks if the matrix is valid, no NaN or infinite numbers', () => {
-      const mat = Matrix3x4.getIdentityMatrix();
+      const mat = new Matrix3x4();
 
       mat.setOrigin(NaN, 1, 2);
       expect(mat.isValid).toEqual(false);

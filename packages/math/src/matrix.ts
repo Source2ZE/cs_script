@@ -31,7 +31,7 @@ export class Matrix3x4 {
   }
 
   public get isIdentity(): boolean {
-    return this.equals(Matrix3x4.getIdentityMatrix());
+    return this.equals(Matrix3x4.identityMatrix as Matrix3x4);
   }
 
   public get isValid(): boolean {
@@ -343,10 +343,6 @@ export class Matrix3x4 {
     return this.m;
   }
 
-  private static Forward = new Vec3(1, 0, 0);
-  private static Right = new Vec3(0, 1, 0);
-  private static Up = new Vec3(0, 0, 1);
-
   public static getScaleMatrix(x: number, y: number, z: number): Matrix3x4 {
     const matrix = new Matrix3x4();
 
@@ -357,14 +353,5 @@ export class Matrix3x4 {
     return matrix;
   }
 
-  public static getIdentityMatrix(): Matrix3x4 {
-    const retMat = new Matrix3x4();
-
-    retMat.m.fill(0);
-    retMat.m[0] = 1;
-    retMat.m[5] = 1;
-    retMat.m[10] = 1;
-
-    return retMat;
-  }
+  public static identityMatrix = Object.freeze(new Matrix3x4());
 }
