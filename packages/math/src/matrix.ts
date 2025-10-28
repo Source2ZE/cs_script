@@ -181,7 +181,7 @@ export class Matrix3x4 {
   }
 
   public set backward(vec: Vec3) {
-    this.forward = vec.multiply(-1);
+    this.forward = vec.inverse;
   }
 
   public get right(): Vec3 {
@@ -217,11 +217,11 @@ export class Matrix3x4 {
   }
 
   public get left(): Vec3 {
-    return this.right.multiply(-1);
+    return this.right.inverse;
   }
 
   public set left(vec: Vec3) {
-    this.right = vec.multiply(-1);
+    this.right = vec.inverse;
   }
 
   public get up(): Vec3 {
@@ -259,7 +259,7 @@ export class Matrix3x4 {
   }
 
   public set down(vec: Vec3) {
-    this.up = vec.multiply(-1);
+    this.up = vec.inverse;
   }
 
   public multiply(mat2: Matrix3x4): Matrix3x4 {
