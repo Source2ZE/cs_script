@@ -166,6 +166,9 @@ export class Euler {
   public roll: number;
 
   public static Zero = new Euler(0, 0, 0);
+  public static Forward = new Euler(1, 0, 0);
+  public static Right = new Euler(0, 1, 0);
+  public static Up = new Euler(0, 0, 1);
 
   constructor(pitch: number, yaw: number, roll: number);
   constructor(angle: QAngle);

@@ -15,8 +15,12 @@ export class Matrix3x4 {
   //  1   4  5  6  7
   //  2   8  9  10 11
 
-  public get isIdentity(): boolean {
-    return this.equals(Matrix3x4.IdentityMatrix);
+  // set to identity
+  constructor() {
+    this.m.fill(0);
+    this.m[0] = 1;
+    this.m[5] = 1;
+    this.m[10] = 1;
   }
 
   public equals(mat2: Matrix3x4, tolerance: number = 1e-5) {
@@ -26,11 +30,54 @@ export class Matrix3x4 {
     return true;
   }
 
+  public get isIdentity(): boolean {
+    return this.equals(Matrix3x4.identityMatrix as Matrix3x4);
+  }
+
   public get isValid(): boolean {
+    if (!this.isOrthogonal) {
+      return false;
+    }
+
     for (let i = 0; i < 12; i++) {
       if (!Number.isFinite(this.m[i])) return false;
     }
     return true;
+  }
+
+  // multiplying an orthogonal matrix with its transpose should always give us the identity matrix.
+  public get isOrthogonal(): boolean {
+    return this.multiply(this.inverse).isIdentity;
+  }
+
+  /**
+   * Inverts the matrix. Actually a transpose but as long as our matrix stays orthogonal it should be the same.
+   */
+  public get inverse(): Matrix3x4 {
+    const retMat = new Matrix3x4();
+    // transpose the matrix
+    retMat.m[0] = this.m[0];
+    retMat.m[1] = this.m[4];
+    retMat.m[2] = this.m[8];
+
+    retMat.m[4] = this.m[1];
+    retMat.m[5] = this.m[5];
+    retMat.m[6] = this.m[9];
+
+    retMat.m[8] = this.m[2];
+    retMat.m[9] = this.m[6];
+    retMat.m[10] = this.m[10];
+
+    // convert translation to new space
+    const x = this.m[3];
+    const y = this.m[7];
+    const z = this.m[11];
+
+    retMat.m[3] = -(x * retMat.m[0] + y * retMat.m[1] + z * retMat.m[2]);
+    retMat.m[7] = -(x * retMat.m[4] + y * retMat.m[5] + z * retMat.m[6]);
+    retMat.m[11] = -(x * retMat.m[8] + y * retMat.m[9] + z * retMat.m[10]);
+
+    return retMat;
   }
 
   public setOrigin(x: number, y: number, z: number) {
@@ -63,17 +110,12 @@ export class Matrix3x4 {
     this.m[4] = cp * sy;
     this.m[8] = -sp;
 
-    const crcy = cr * cy;
-    const crsy = cr * sy;
-    const srcy = sr * cy;
-    const srsy = sr * sy;
-
-    this.m[1] = sp * srcy - crsy;
-    this.m[5] = sp * srsy + crcy;
+    this.m[1] = sr * sp * cy + cr * -sy;
+    this.m[5] = sr * sp * sy + cr * cy;
     this.m[9] = sr * cp;
 
-    this.m[2] = sp * crcy + srsy;
-    this.m[6] = sp * crsy - srcy;
+    this.m[2] = cr * sp * cy + -sr * -sy;
+    this.m[6] = cr * sp * sy + -sr * cy;
     this.m[10] = cr * cp;
   }
 
@@ -106,24 +148,118 @@ export class Matrix3x4 {
     return new Vec3(this.m[0], this.m[4], this.m[8]);
   }
 
+  public set forward(vec: Vec3) {
+    // normalise because users can not be trusted
+    const fwd = vec.normal;
+
+    let right: Vec3;
+    if (Math.abs(fwd.dot(Vec3.Up)) > 0.999) {
+      // forward is nearly the same as up/down, use world forward instead to avoid divide by zero
+      right = fwd.cross(Vec3.Forward).normal;
+    } else {
+      // this makes the right vector always perpendicular to world up vector, it makes the orientation of everything more stable.
+      right = Vec3.Up.cross(fwd).normal;
+    }
+
+    const up = fwd.cross(right).normal;
+
+    this.m[0] = fwd.x;
+    this.m[4] = fwd.y;
+    this.m[8] = fwd.z;
+
+    this.m[1] = right.x;
+    this.m[5] = right.y;
+    this.m[9] = right.z;
+
+    this.m[2] = up.x;
+    this.m[6] = up.y;
+    this.m[10] = up.z;
+  }
+
   public get backward(): Vec3 {
     return new Vec3(-this.m[0], -this.m[4], -this.m[8]);
   }
 
+  public set backward(vec: Vec3) {
+    this.forward = vec.inverse;
+  }
+
   public get right(): Vec3 {
-    return new Vec3(this.m[1], this.m[5], this.m[9]);
+    return new Vec3(-this.m[1], -this.m[5], -this.m[9]);
+  }
+
+  public set right(vec: Vec3) {
+    // normalise because users can not be trusted
+    const right = vec.normal;
+
+    let fwd: Vec3;
+    if (Math.abs(right.dot(Vec3.Up)) > 0.999) {
+      // right is nearly the same as up/down, use world forward instead to avoid divide by zero
+      fwd = Vec3.Forward.cross(right).normal;
+    } else {
+      // this makes the forward vector always perpendicular to world up vector, it makes the orientation of everything more stable.
+      fwd = right.cross(Vec3.Up).normal;
+    }
+
+    const up = fwd.cross(right).normal;
+
+    this.m[0] = fwd.x;
+    this.m[4] = fwd.y;
+    this.m[8] = fwd.z;
+
+    this.m[1] = right.x;
+    this.m[5] = right.y;
+    this.m[9] = right.z;
+
+    this.m[2] = up.x;
+    this.m[6] = up.y;
+    this.m[10] = up.z;
   }
 
   public get left(): Vec3 {
-    return new Vec3(-this.m[1], -this.m[5], -this.m[9]);
+    return this.right.inverse;
+  }
+
+  public set left(vec: Vec3) {
+    this.right = vec.inverse;
   }
 
   public get up(): Vec3 {
     return new Vec3(this.m[2], this.m[6], this.m[10]);
   }
 
+  public set up(vec: Vec3) {
+    // normalise because users can not be trusted
+    const up = vec.normal;
+
+    let right: Vec3;
+    if (Math.abs(up.dot(Vec3.Forward)) > 0.999) {
+      right = Vec3.Right.cross(up).normal;
+    } else {
+      right = up.cross(Vec3.Forward).normal;
+    }
+
+    const fwd = right.cross(up).normal;
+
+    this.m[0] = fwd.x;
+    this.m[4] = fwd.y;
+    this.m[8] = fwd.z;
+
+    this.m[1] = right.x;
+    this.m[5] = right.y;
+    this.m[9] = right.z;
+
+    this.m[2] = up.x;
+    this.m[6] = up.y;
+    this.m[10] = up.z;
+  }
+
   public get down(): Vec3 {
     return new Vec3(-this.m[2], -this.m[6], -this.m[10]);
+  }
+
+  public set down(vec: Vec3) {
+    this.up = vec.inverse;
   }
 
   public multiply(mat2: Matrix3x4): Matrix3x4 {
@@ -197,40 +333,10 @@ export class Matrix3x4 {
     );
   }
 
-  /**
-   * Inverts the matrix. Actually a transpose but as long as our matrix stays orthogonal it should be the same.
-   */
-  public get inverse(): Matrix3x4 {
-    const retMat = new Matrix3x4();
-    // transpose the matrix
-    retMat.m[0] = this.m[0];
-    retMat.m[1] = this.m[4];
-    retMat.m[2] = this.m[8];
-
-    retMat.m[4] = this.m[1];
-    retMat.m[5] = this.m[5];
-    retMat.m[6] = this.m[9];
-
-    retMat.m[8] = this.m[2];
-    retMat.m[9] = this.m[6];
-    retMat.m[10] = this.m[10];
-
-    // convert translation to new space
-    const x = this.m[3];
-    const y = this.m[7];
-    const z = this.m[100];
-
-    retMat.m[3] = -(x * retMat.m[0] + y * retMat.m[1] + z * retMat.m[2]);
-    retMat.m[7] = -(x * retMat.m[1] + y * retMat.m[5] + z * retMat.m[6]);
-    retMat.m[11] = -(x * retMat.m[2] + y * retMat.m[9] + z * retMat.m[10]);
-
-    return retMat;
-  }
-
   public toString(): string {
     return `\n           [${this.m[0]}, ${this.m[1]}, ${this.m[2]}, ${this.m[3]}]
                 \nMatrix3_4: [${this.m[4]}, ${this.m[5]}, ${this.m[6]}, ${this.m[7]}]
-                \n           [${this.m[8]}, ${this.m[9]}, ${this.m[10]}, ${this.m[10]}]`;
+                \n           [${this.m[8]}, ${this.m[9]}, ${this.m[10]}, ${this.m[11]}]`;
   }
 
   public toArray(): Float32Array {
@@ -247,16 +353,5 @@ export class Matrix3x4 {
     return matrix;
   }
 
-  private static getIdentityMatrix(): Matrix3x4 {
-    const retMat = new Matrix3x4();
-
-    retMat.m.fill(0);
-    retMat.m[0] = 1;
-    retMat.m[5] = 1;
-    retMat.m[10] = 1;
-
-    return retMat;
-  }
-
-  public static IdentityMatrix = Matrix3x4.getIdentityMatrix();
+  public static identityMatrix = Object.freeze(new Matrix3x4());
 }

@@ -159,7 +159,11 @@ export class Vec3 {
   public x: number;
   public y: number;
   public z: number;
+
   public static Zero = new Vec3(0, 0, 0);
+  public static Forward = new Vec3(1, 0, 0);
+  public static Right = new Vec3(0, 1, 0);
+  public static Up = new Vec3(0, 0, 1);
 
   constructor(x: number, y: number, z: number);
   constructor(vector: Vector);

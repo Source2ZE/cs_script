@@ -11,10 +11,10 @@ import { Matrix3x4, Vec3 } from '../src';
 
 describe('Matrix3x4 class', () => {
   describe('constructor', () => {
-    it('creates a zerod out Matrix3x4', () => {
+    it('creates an identity Matrix3x4', () => {
       const matrix = new Matrix3x4();
       expect(matrix.toArray()).toEqual(
-        new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]),
       );
     });
   });
@@ -31,16 +31,6 @@ describe('Matrix3x4 class', () => {
       m2.setAngles(10, 20, 30);
 
       expect(m1.equals(m2)).toEqual(true);
-    });
-  });
-
-  describe('identity', () => {
-    it('creates the identity matrix for Matrix3x4', () => {
-      const identityMatrix = Matrix3x4.IdentityMatrix;
-      expect(identityMatrix.toArray()).toEqual(
-        new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]),
-      );
-      expect(identityMatrix.isIdentity).toEqual(true);
     });
   });
 
@@ -85,8 +75,97 @@ describe('Matrix3x4 class', () => {
     });
   });
 
-  //ground truth is doing these rotations in hammer and verifying the code matches the results
+  describe('set/get forward angles', () => {
+    it('checks if we get the same angles we set and if the matrix stays orthogonal', () => {
+      const mat = new Matrix3x4();
 
+      mat.forward = new Vec3(1, 0, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(0);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.forward = new Vec3(0, 1, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(90);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.forward = new Vec3(0, 0, 1);
+
+      expect(mat.angles.pitch).toBeCloseTo(-90);
+      expect(mat.angles.yaw).toBeCloseTo(0);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+    });
+  });
+
+  describe('set/get right angles', () => {
+    it('checks if we get the same angles we set and if the matrix stays orthogonal', () => {
+      const mat = new Matrix3x4();
+
+      mat.right = new Vec3(0, 1, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(0);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.right = new Vec3(0, 0, 1);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(-90);
+      expect(mat.angles.roll).toBeCloseTo(90);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.right = new Vec3(1, 0, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(-90);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+    });
+  });
+
+  describe('set/get up angles', () => {
+    it('checks if we get the same angles we set and if the matrix stays orthogonal', () => {
+      const mat = new Matrix3x4();
+
+      mat.up = new Vec3(0, 0, 1);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(0);
+      expect(mat.angles.roll).toBeCloseTo(0);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.up = new Vec3(1, 0, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(-90);
+      expect(mat.angles.roll).toBeCloseTo(-90);
+
+      expect(mat.isValid).toBe(true);
+
+      mat.up = new Vec3(0, 1, 0);
+
+      expect(mat.angles.pitch).toBeCloseTo(0);
+      expect(mat.angles.yaw).toBeCloseTo(0);
+      expect(mat.angles.roll).toBeCloseTo(-90);
+
+      expect(mat.isValid).toBe(true);
+    });
+  });
+
+  //ground truth is doing these rotations in hammer and verifying the code matches the results
   describe('transform 90 deg pitch rotation', () => {
     it('checks if we get the correct position output', () => {
       const mat = new Matrix3x4();
