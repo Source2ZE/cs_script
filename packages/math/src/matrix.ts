@@ -152,13 +152,13 @@ export class Matrix3x4 {
     // normalise because users can not be trusted
     const fwd = vec.normal;
 
-    let right = new Vec3(0, 0, 0);
-    if (Math.abs(fwd.dot(Matrix3x4.Up)) > 0.999) {
+    let right: Vec3;
+    if (Math.abs(fwd.dot(Vec3.Up)) > 0.999) {
       // forward is nearly the same as up/down, use world forward instead to avoid divide by zero
-      right = fwd.cross(Matrix3x4.Forward).normal;
+      right = fwd.cross(Vec3.Forward).normal;
     } else {
       // this makes the right vector always perpendicular to world up vector, it makes the orientation of everything more stable.
-      right = Matrix3x4.Up.cross(fwd).normal;
+      right = Vec3.Up.cross(fwd).normal;
     }
 
     const up = fwd.cross(right).normal;
@@ -192,13 +192,13 @@ export class Matrix3x4 {
     // normalise because users can not be trusted
     const right = vec.normal;
 
-    let fwd = new Vec3(0, 0, 0);
-    if (Math.abs(right.dot(Matrix3x4.Up)) > 0.999) {
+    let fwd: Vec3;
+    if (Math.abs(right.dot(Vec3.Up)) > 0.999) {
       // right is nearly the same as up/down, use world forward instead to avoid divide by zero
-      fwd = Matrix3x4.Forward.cross(right).normal;
+      fwd = Vec3.Forward.cross(right).normal;
     } else {
       // this makes the forward vector always perpendicular to world up vector, it makes the orientation of everything more stable.
-      fwd = right.cross(Matrix3x4.Up).normal;
+      fwd = right.cross(Vec3.Up).normal;
     }
 
     const up = fwd.cross(right).normal;
@@ -232,11 +232,11 @@ export class Matrix3x4 {
     // normalise because users can not be trusted
     const up = vec.normal;
 
-    let right = new Vec3(0, 0, 0);
-    if (Math.abs(up.dot(Matrix3x4.Forward)) > 0.999) {
-      right = Matrix3x4.Right.cross(up).normal;
+    let right: Vec3;
+    if (Math.abs(up.dot(Vec3.Forward)) > 0.999) {
+      right = Vec3.Right.cross(up).normal;
     } else {
-      right = up.cross(Matrix3x4.Forward).normal;
+      right = up.cross(Vec3.Forward).normal;
     }
 
     const fwd = right.cross(up).normal;
