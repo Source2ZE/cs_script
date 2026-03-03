@@ -160,10 +160,18 @@ export class Vec3 {
   public y: number;
   public z: number;
 
-  public static Zero = new Vec3(0, 0, 0);
-  public static Forward = new Vec3(1, 0, 0);
-  public static Right = new Vec3(0, 1, 0);
-  public static Up = new Vec3(0, 0, 1);
+  public static get Zero() {
+    return new Vec3(0, 0, 0);
+  }
+  public static get Forward() {
+    return new Vec3(1, 0, 0);
+  }
+  public static get Right() {
+    return new Vec3(0, 1, 0);
+  }
+  public static get Up() {
+    return new Vec3(0, 0, 1);
+  }
 
   constructor(x: number, y: number, z: number);
   constructor(vector: Vector);

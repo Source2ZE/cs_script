@@ -296,4 +296,39 @@ describe('Vec3 class', () => {
       });
     });
   });
+
+  describe('static fields', () => {
+    it('Vec3.Zero creates a new instance', () => {
+      expect(Vec3.Zero).not.toBe(Vec3.Zero);
+      expect(Vec3.Zero).toMatchObject({
+        x: 0,
+        y: 0,
+        z: 0,
+      });
+    });
+    it('Vec3.Up creates a new instance', () => {
+      expect(Vec3.Up).not.toBe(Vec3.Up);
+      expect(Vec3.Up).toMatchObject({
+        x: 0,
+        y: 0,
+        z: 1,
+      });
+    });
+    it('Vec3.Forward creates a new instance', () => {
+      expect(Vec3.Forward).not.toBe(Vec3.Forward);
+      expect(Vec3.Forward).toMatchObject({
+        x: 1,
+        y: 0,
+        z: 0,
+      });
+    });
+    it('Vec3.Right creates a new instance', () => {
+      expect(Vec3.Right).not.toBe(Vec3.Right);
+      expect(Vec3.Right).toMatchObject({
+        x: 0,
+        y: 1,
+        z: 0,
+      });
+    });
+  });
 });
