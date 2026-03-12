@@ -9,6 +9,9 @@
   "exports": {
     ".": "./build/index.js"
   },
+  "peerDependencies": {
+    "@s2ze/math": "^2.15.0"
+  },
   "devDependencies": {
     "@s2ze/tsconfig": "file:../tsconfig"
   },
