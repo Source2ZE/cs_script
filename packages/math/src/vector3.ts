@@ -88,6 +88,14 @@ export class Vector3Utils {
     return Vector3Utils.subtract(a, b).lengthSquared;
   }
 
+  public static distance2D(a: Vector, b: Vector): number {
+    return new Vec3(a.x - b.x, a.y - b.y, 0).length;
+  }
+
+  public static distance2DSquared(a: Vector, b: Vector): number {
+    return new Vec3(a.x - b.x, a.y - b.y, 0).lengthSquared;
+  }
+
   public static floor(vector: Vector): Vec3 {
     return new Vec3(
       Math.floor(vector.x),
@@ -152,6 +160,26 @@ export class Vector3Utils {
 
   public static withZ(vector: Vector, z: number): Vec3 {
     return new Vec3(vector.x, vector.y, z);
+  }
+
+  public static round(vector: Vector): Vec3 {
+    return new Vec3(
+      Math.round(vector.x),
+      Math.round(vector.y),
+      Math.round(vector.z),
+    );
+  }
+
+  public static ceil(vector: Vector): Vec3 {
+    return new Vec3(
+      Math.ceil(vector.x),
+      Math.ceil(vector.y),
+      Math.ceil(vector.z),
+    );
+  }
+
+  public static map(vector: Vector, callback: (component: number) => number) {
+    return new Vec3(callback(vector.x), callback(vector.y), callback(vector.z));
   }
 }
 
@@ -222,6 +250,20 @@ export class Vec3 {
   }
 
   /**
+   * Ceil (Round up) each vector component
+   */
+  public get ceil(): Vec3 {
+    return Vector3Utils.ceil(this);
+  }
+
+  /**
+   * Rounds each vector component
+   */
+  public get round(): Vec3 {
+    return Vector3Utils.round(this);
+  }
+
+  /**
    * Calculates the angles from a forward vector
    */
   public get eulerAngles(): Euler {
@@ -279,8 +321,16 @@ export class Vec3 {
     return Vector3Utils.distance(this, vector);
   }
 
+  public distance2D(vector: Vector): number {
+    return Vector3Utils.distance2D(this, vector);
+  }
+
   public distanceSquared(vector: Vector): number {
     return Vector3Utils.distanceSquared(this, vector);
+  }
+
+  public distance2DSquared(vector: Vector): number {
+    return Vector3Utils.distance2DSquared(this, vector);
   }
 
   /**

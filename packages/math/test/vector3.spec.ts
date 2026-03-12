@@ -83,6 +83,28 @@ describe('Vec3 class', () => {
     });
   });
 
+  describe('ceil', () => {
+    it('rounds up the vector components', () => {
+      const vec = new Vec3({ x: 0, y: -0.123, z: 1.999 });
+      expect(vec.ceil).toMatchObject({
+        x: 0,
+        y: 0,
+        z: 2,
+      });
+    });
+  });
+
+  describe('round', () => {
+    it('rounds the vector components', () => {
+      const vec = new Vec3({ x: 0, y: -0.623, z: 1.999 });
+      expect(vec.round).toMatchObject({
+        x: 0,
+        y: -1,
+        z: 2,
+      });
+    });
+  });
+
   describe('eulerAngles', () => {
     it('gets angles from a normalized forward vector', () => {
       const vec = new Vec3({ x: 0, y: 1, z: 0 });
@@ -203,12 +225,30 @@ describe('Vec3 class', () => {
     });
   });
 
+  describe('distance2D', () => {
+    it('gets the 2d distance between two vectors', () => {
+      const vec1 = new Vec3({ x: 1, y: 1, z: 5 });
+      const vec2 = new Vec3({ x: -2, y: 5, z: 2 });
+      expect(vec1.distance2D(vec2)).toBe(5);
+      expect(vec2.distance2D(vec1)).toBe(5);
+    });
+  });
+
   describe('distanceSquared', () => {
     it('gets the squared distance between two vectors', () => {
       const vec1 = new Vec3({ x: 1, y: -1, z: 1 });
       const vec2 = new Vec3({ x: -1, y: 1, z: 2 });
       expect(vec1.distanceSquared(vec2)).toBe(9);
       expect(vec2.distanceSquared(vec1)).toBe(9);
+    });
+  });
+
+  describe('distance2D', () => {
+    it('gets the 2d squared distance between two vectors', () => {
+      const vec1 = new Vec3({ x: 1, y: 1, z: 5 });
+      const vec2 = new Vec3({ x: -2, y: 5, z: 2 });
+      expect(vec1.distance2DSquared(vec2)).toBe(25);
+      expect(vec2.distance2DSquared(vec1)).toBe(25);
     });
   });
 

@@ -158,6 +158,30 @@ export class EulerUtils {
       MathUtils.clamp(angle.roll, min.roll, max.roll),
     );
   }
+
+  public static round(angle: QAngle): Euler {
+    return new Euler(
+      Math.round(angle.pitch),
+      Math.round(angle.yaw),
+      Math.round(angle.roll),
+    );
+  }
+
+  public static floor(angle: QAngle): Euler {
+    return new Euler(
+      Math.floor(angle.pitch),
+      Math.floor(angle.yaw),
+      Math.floor(angle.roll),
+    );
+  }
+
+  public static ceil(angle: QAngle): Euler {
+    return new Euler(
+      Math.ceil(angle.pitch),
+      Math.ceil(angle.yaw),
+      Math.ceil(angle.roll),
+    );
+  }
 }
 
 export class Euler {
@@ -231,6 +255,27 @@ export class Euler {
    */
   public get down(): Vec3 {
     return this.up.inverse;
+  }
+
+  /**
+   * Floor (Round down) each vector component
+   */
+  public get floor(): Euler {
+    return EulerUtils.floor(this);
+  }
+
+  /**
+   * Ceil (Round up) each vector component
+   */
+  public get ceil(): Euler {
+    return EulerUtils.ceil(this);
+  }
+
+  /**
+   * Rounds each vector component
+   */
+  public get round(): Euler {
+    return EulerUtils.round(this);
   }
 
   public toString(): string {
