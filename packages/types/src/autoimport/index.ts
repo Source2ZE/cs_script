@@ -132,8 +132,12 @@ declare module "cs_script/point_script"
         OnGunReload(callback: (event: { weapon: CSWeaponBase }) => void): void;
         /** Called when a gun emits bullets. A shotgun will only trigger this once when emitting multiple bullets at once. */
         OnGunFire(callback: (event: { weapon: CSWeaponBase }) => void): void;
-        /** Called when a bullet hits a surface. This will trigger for each bullet and for each impact. Penetrations can cause a single bullet to trigger multiple impacts. */
-        OnBulletImpact(callback: (event: { weapon: CSWeaponBase, position: Vector }) => void): void;
+        /**
+         * Called when a bullet hits a surface.
+         * Penetrations can cause a single bullet to trigger multiple impacts.
+         * This will be called for all impacts of a bullet before any player damage events are called.
+         */
+        OnBulletImpact(callback: (event: { weapon: CSWeaponBase, position: Vector, hitEntity: Entity }) => void): void;
         /** Called when a grenade is thrown. `projectile` is the newly created grenade projectile. */
         OnGrenadeThrow(callback: (event: { weapon: CSWeaponBase, projectile: Entity }) => void): void;
         /** Called when a grenade bounces off a surface. `bounces` is the number of bounces so far. */
@@ -213,6 +217,7 @@ declare module "cs_script/point_script"
     }
 
     type Vector = { x: number, y: number, z: number };
+    type RotationVector = { x: number, y: number, z: number };
     type QAngle = { pitch: number, yaw: number, roll: number };
     type ColorArg = { r: number, g: number, b: number, a?: number };
     type Color = { r: number, g: number, b: number, a: number };
@@ -465,12 +470,16 @@ declare module "cs_script/point_script"
         GetAbsVelocity(): Vector;
         /** The velocity of this entity relative to its parent. Will be relative to the world if no parent. */
         GetLocalVelocity(): Vector;
+        /** The angular velocity of this entity relative to the world. */
+        GetAbsAngularVelocity(): RotationVector;
+        /** The angular velocity of this entity relative to its parent. Will be relative to the world if no parent. */
+        GetLocalAngularVelocity(): RotationVector;
         /** The angles of the eyes of this entity relative to the world. */
         GetEyeAngles(): QAngle;
         /** The position of the eyes of this entity relative to the world */
         GetEyePosition(): Vector;
         /** Update the physics state of this entity. */
-        Teleport(newValues: { position?: Vector, angles?: QAngle, velocity?: Vector }): void;
+        Teleport(newValues: { position?: Vector, angles?: QAngle, velocity?: Vector, angularVelocity?: RotationVector }): void;
         GetClassName(): string;
         GetEntityName(): string;
         SetEntityName(name: string): void;
@@ -529,6 +538,10 @@ declare module "cs_script/point_script"
     export class CSWeaponBase extends BaseModelEntity {
         GetData(): CSWeaponData;
         GetOwner(): CSPlayerPawn | undefined;
+        GetClipAmmo(): number;
+        SetClipAmmo(ammo: number): void;
+        GetReserveAmmo(): number;
+        SetReserveAmmo(ammo: number): void;
     }
 
     export class CSWeaponData {
@@ -537,6 +550,8 @@ declare module "cs_script/point_script"
         GetGearSlot(): CSGearSlot;
         GetPrice(): number;
         GetDamage(): number;
+        GetMaxClipAmmo(): number;
+        GetMaxReserveAmmo(): number;
         /** Maximum distance bullets will travel. */
         GetRange(): number;
         /** Exponential damage drop off from traveling through air. nextDamage = currentDamage * rangeModifier ^ (distance / 500). */
