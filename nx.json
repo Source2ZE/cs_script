@@ -11,6 +11,9 @@
     "version": {
       "conventionalCommits": false,
       "preserveMatchingDependencyRanges": false,
+      "versionActionsOptions": {
+        "installIgnoreScripts": true
+      },
       "git": {
         "commit": true,
         "commitMessage": "chore(release): publish {version}",
