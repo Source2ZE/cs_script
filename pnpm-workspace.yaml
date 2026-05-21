@@ -1,4 +1,6 @@
 packages:
   - 'packages/*'
 allowBuilds:
+  '@swc/core': true
+  nx: true
   unrs-resolver: false

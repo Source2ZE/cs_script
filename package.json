@@ -1,14 +1,25 @@
 {
   "name": "cs-script-workspace",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Source2ZE/cs_script.git"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.2.6",
+    "@nx/js": "^22.7.2",
+    "@swc-node/register": "~1.11.1",
+    "@swc/core": "~1.15.5",
+    "@swc/helpers": "~0.5.18",
+    "nx": "^22.0.0",
     "rimraf": "^6.0.1",
     "typescript": "5.9.3"
   },
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
+    "release:version": "nx release version",
+    "release:publish": "nx release publish",
     "publish-all": "pnpm -r run build && pnpm -r run test && pnpm -r publish --no-private",
     "republish": "pnpm -r exec npm publish",
     "format": "biome check --write",
