@@ -33,6 +33,6 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@s2ze/tsconfig": "file:../tsconfig"
+    "@s2ze/tsconfig": "workspace:*"
   }
 }

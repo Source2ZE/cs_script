@@ -13,7 +13,8 @@
     "@s2ze/math": "^2.15.0"
   },
   "devDependencies": {
-    "@s2ze/tsconfig": "file:../tsconfig"
+    "@s2ze/tsconfig": "workspace:*",
+    "@s2ze/types": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

@@ -10,7 +10,8 @@
     ".": "./build/index.js"
   },
   "devDependencies": {
-    "@s2ze/tsconfig": "file:../tsconfig"
+    "@s2ze/tsconfig": "workspace:*",
+    "@s2ze/types": "workspace:*"
   },
   "publishConfig": {
     "access": "public",
