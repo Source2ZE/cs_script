@@ -10,16 +10,12 @@
     },
     "version": {
       "conventionalCommits": false,
-      "preserveMatchingDependencyRanges": false,
-      "versionActionsOptions": {
-        "installIgnoreScripts": true
-      },
+      "preserveMatchingDependencyRanges": ["peerDependencies"],
       "git": {
         "commit": true,
         "commitMessage": "chore(release): publish {version}",
         "stageChanges": true,
-        "tag": true,
-        "tagMessage": "v{version}"
+        "tag": true
       }
     },
     "changelog": {

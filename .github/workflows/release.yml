@@ -46,12 +46,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # - name: Ensure release is running from master
-      #   run: |
-      #     if [[ "${GITHUB_REF}" != "refs/heads/master" ]]; then
-      #       echo "Releases must run from master. Current ref: ${GITHUB_REF}"
-      #       exit 1
-      #     fi
+      - name: Ensure release is running from master
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/master" ]]; then
+            echo "Releases must run from master. Current ref: ${GITHUB_REF}"
+            exit 1
+          fi
 
       - name: Validate release version
         env:
@@ -68,7 +68,15 @@ jobs:
       - name: Create release commit and tag
         env:
           VERSION: ${{ inputs.version }}
-        run: pnpm nx release version "$VERSION"
+        run: |
+          pnpm nx release version "$VERSION" --verbose || {
+            echo "::group::Release version diagnostics"
+            pnpm nx release version "$VERSION" --printConfig || true
+            pnpm install --lockfile-only || true
+            git status --short || true
+            echo "::endgroup::"
+            exit 1
+          }
 
       - name: Build packages
         run: pnpm build
