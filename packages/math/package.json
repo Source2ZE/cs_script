@@ -4,6 +4,11 @@
   "description": "",
   "license": "MIT",
   "author": "Source2ZE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Source2ZE/cs_script.git",
+    "directory": "packages/math"
+  },
   "types": "build/index.d.ts",
   "main": "./build/index.js",
   "exports": {
@@ -11,7 +16,9 @@
   },
   "type": "module",
   "devDependencies": {
-    "@s2ze/tsconfig": "file:../tsconfig",
+    "@s2ze/tsconfig": "workspace:*",
+    "@s2ze/types": "workspace:*",
+    "@jest/globals": "^30.2.0",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.5"
   },

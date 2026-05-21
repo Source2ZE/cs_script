@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "release": {
+    "projects": [
+      "packages/*"
+    ],
+    "projectsRelationship": "fixed",
+    "releaseTag": {
+      "pattern": "v{version}"
+    },
+    "version": {
+      "conventionalCommits": false,
+      "preserveMatchingDependencyRanges": false,
+      "git": {
+        "commit": true,
+        "commitMessage": "chore(release): publish {version}",
+        "stageChanges": true,
+        "tag": true,
+        "tagMessage": "v{version}"
+      }
+    },
+    "changelog": {
+      "workspaceChangelog": true,
+      "projectChangelogs": false
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    }
+  ]
+}

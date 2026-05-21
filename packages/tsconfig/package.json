@@ -3,6 +3,11 @@
   "version": "2.11.0",
   "license": "MIT",
   "author": "Source2ZE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Source2ZE/cs_script.git",
+    "directory": "packages/tsconfig"
+  },
   "peerDependencies": {
     "@s2ze/types": "^2.8.0"
   },
