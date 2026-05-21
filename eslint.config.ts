@@ -30,6 +30,8 @@ export default tseslint.config(
         'warn',
         { code: 120, ignoreUrls: true, ignoreStrings: true },
       ],
+      '@stylistic/function-call-argument-newline': ['warn', 'consistent'],
+      '@stylistic/function-paren-newline': ['warn', 'multiline-arguments'],
     },
   },
 );
