@@ -1,8 +1,8 @@
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit"
+    "source.organizeImports": "always",
+    "source.fixAll.eslint": "always"
   },
   "typescript.preferences.preferTypeOnlyAutoImports": true
 }

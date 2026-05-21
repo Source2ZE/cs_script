@@ -165,7 +165,7 @@ describe('Matrix3x4 class', () => {
     });
   });
 
-  //ground truth is doing these rotations in hammer and verifying the code matches the results
+  // ground truth is doing these rotations in hammer and verifying the code matches the results
   describe('transform 90 deg pitch rotation', () => {
     it('checks if we get the correct position output', () => {
       const mat = new Matrix3x4();

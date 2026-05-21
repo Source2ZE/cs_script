@@ -7,17 +7,17 @@ declare module 'cs_script/point_script' {
   }
 
   interface Domain {
-    FindEntityByClass<T extends keyof EntityClassMap>(
+    FindEntityByClass<T extends keyof EntityClassMap> (
       className: T,
     ): EntityClassMap[T] | undefined;
-    FindEntityByClass<T extends Entity>(className: string): T | undefined;
+    FindEntityByClass<T extends Entity> (className: string): T | undefined;
 
-    FindEntitiesByClass<T extends keyof EntityClassMap>(
+    FindEntitiesByClass<T extends keyof EntityClassMap> (
       className: T,
     ): EntityClassMap[T][];
-    FindEntitiesByClass<T extends Entity>(className: string): T[];
+    FindEntitiesByClass<T extends Entity> (className: string): T[];
 
-    FindEntityByName<T extends Entity>(className: string): T | undefined;
-    FindEntitiesByName<T extends Entity>(className: string): T[];
+    FindEntityByName<T extends Entity> (className: string): T | undefined;
+    FindEntitiesByName<T extends Entity> (className: string): T[];
   }
 }

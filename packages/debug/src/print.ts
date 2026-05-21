@@ -1,15 +1,16 @@
 import { Entity, Instance } from 'cs_script/point_script';
 
-type PrintArgument =
-  | string
-  | object
-  | any[]
-  | null
-  | undefined
-  | boolean
-  | number
-  | bigint
-  | symbol;
+type PrintArgument
+  = | string
+    | object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    | any[]
+    | null
+    | undefined
+    | boolean
+    | number
+    | bigint
+    | symbol;
 
 function lineMap(value: PrintArgument) {
   if (value === null) return '<null>';

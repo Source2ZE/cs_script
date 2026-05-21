@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { Instance } from 'cs_script/point_script';
 
 let idPool = 0;

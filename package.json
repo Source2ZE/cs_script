@@ -6,14 +6,17 @@
     "url": "git+https://github.com/Source2ZE/cs_script.git"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.6",
     "@nx/js": "^22.7.2",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@swc-node/register": "~1.11.1",
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",
+    "eslint": "^10.4.0",
+    "jiti": "^2.7.0",
     "nx": "^22.0.0",
     "rimraf": "^6.0.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.59.4"
   },
   "scripts": {
     "build": "pnpm -r run build",
@@ -22,8 +25,8 @@
     "release:publish": "nx release publish",
     "publish-all": "pnpm -r run build && pnpm -r run test && pnpm -r publish --no-private",
     "republish": "pnpm -r exec npm publish",
-    "format": "biome check --write",
-    "lint": "biome lint"
+    "lint": "eslint .",
+    "format": "eslint . --fix"
   },
   "type": "module",
   "packageManager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f"

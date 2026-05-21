@@ -134,8 +134,8 @@ export class Matrix3x4 {
       returnAngles.yaw = Math.atan2(forward1, forward0) * RAD_TO_DEG;
       returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
       returnAngles.roll = Math.atan2(this.m[9], this.m[10]) * RAD_TO_DEG;
-    } // gimbal lock
-    else {
+    } else {
+      // gimbal lock
       returnAngles.yaw = Math.atan2(-this.m[1], this.m[5]) * RAD_TO_DEG;
       returnAngles.pitch = Math.atan2(-this.m[8], xyDist) * RAD_TO_DEG;
       returnAngles.roll = 0.0;
@@ -157,7 +157,8 @@ export class Matrix3x4 {
       // forward is nearly the same as up/down, use world forward instead to avoid divide by zero
       right = fwd.cross(Vec3.Forward).normal;
     } else {
-      // this makes the right vector always perpendicular to world up vector, it makes the orientation of everything more stable.
+      // this makes the right vector always perpendicular to world up vector,
+      // it makes the orientation of everything more stable.
       right = Vec3.Up.cross(fwd).normal;
     }
 
@@ -197,7 +198,8 @@ export class Matrix3x4 {
       // right is nearly the same as up/down, use world forward instead to avoid divide by zero
       fwd = Vec3.Forward.cross(right).normal;
     } else {
-      // this makes the forward vector always perpendicular to world up vector, it makes the orientation of everything more stable.
+      // this makes the forward vector always perpendicular to world up vector,
+      // it makes the orientation of everything more stable.
       fwd = right.cross(Vec3.Up).normal;
     }
 
