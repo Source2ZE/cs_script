@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { Vec3 } from '../src';
+import { Vec3 } from '../src/vector3';
 
 describe('Vec3 class', () => {
   describe('constructor', () => {

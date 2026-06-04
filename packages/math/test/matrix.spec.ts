@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { Matrix3x4, Vec3 } from '../src';
+import { Matrix3x4 } from '../src/matrix';
+import { Vec3 } from '../src/vector3';
 
 // matrix layout
 //
