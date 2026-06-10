@@ -141,7 +141,7 @@ export class Vec2 {
     return new Vec2(0, 0);
   }
 
-  public static get Forward(): Vec2 {
+  public static get Up(): Vec2 {
     return new Vec2(1, 0);
   }
 
