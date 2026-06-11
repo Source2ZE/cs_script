@@ -1,3 +1,4 @@
+import { drawDisk } from '@s2ze/debug';
 import { type Color, CSInputs, type CSPlayerPawn, Instance } from 'cs_script/point_script';
 import { TICK_DT } from './constants';
 import { Euler } from './euler';
@@ -168,7 +169,7 @@ export class CurveEditor {
       }
 
       drawDisk({
-        center: this.curveToWorld(point.x, point.y),
+        origin: this.curveToWorld(point.x, point.y),
         radius: this.HandleRadius,
         normal: this.Angles.forward,
         duration: TICK_DT,
@@ -692,40 +693,6 @@ function quadraticBezierInterpolation(a: CurvePoint, b: CurvePoint, c: CurvePoin
 
 function cubicBezierInterpolation(a: CurvePoint, b: CurvePoint, c: CurvePoint, d: CurvePoint, t: number): CurvePoint {
   return linearInterpolate(quadraticBezierInterpolation(a, b, c, t), quadraticBezierInterpolation(b, c, d, t), t);
-}
-
-function drawDisk(config: {
-  center: Vec3;
-  radius: number;
-  normal?: Vec3;
-  segments?: number;
-  duration?: number;
-  color?: Color;
-  offset?: number;
-}) {
-  const { center, radius, normal = new Vec3(0, 0, 1), segments = 8, duration, color, offset = 0 } = config;
-
-  const arbitrary = Math.abs(normal.z) < 0.99 ? new Vec3(0, 0, 1) : new Vec3(1, 0, 0);
-  const u = normal.cross(arbitrary).normal;
-  const v = normal.cross(u).normal;
-
-  const centerOffset = center.add(normal.multiply(-offset));
-
-  let prevPoint: Vec3 | null = null;
-
-  for (let i = 0; i <= segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const point = centerOffset
-      .add(u.multiply(Math.cos(angle) * radius))
-      .add(v.multiply(Math.sin(angle) * radius));
-
-    if (prevPoint) {
-      Instance.DebugLine({ start: prevPoint, end: point, duration, color });
-    }
-    Instance.DebugLine({ start: centerOffset, end: point, duration, color });
-
-    prevPoint = point;
-  }
 }
 
 // taken from https://github.com/samisalreadytaken/vs_library

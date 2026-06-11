@@ -1,9 +1,168 @@
-import type { Euler, Vec3 } from '@s2ze/math';
-import { type Color, Instance } from 'cs_script/point_script';
+import { Euler, Vec3, type Matrix3x4 } from '@s2ze/math';
+import { Instance, type Color } from 'cs_script/point_script';
 
-type Stroke = [number, number, number, number];
+const DEF_DUR = 1;
+const DEF_COL = { r: 255, g: 255, b: 255, a: 255 };
 
-const daFont: Record<string, Stroke[]> = {
+/** Draws a disk/circle in the world */
+export function drawDisk(config: {
+  origin: Vec3;
+  radius: number;
+  normal?: Vec3;
+  segments?: number;
+  duration?: number;
+  color?: Color;
+  offset?: number;
+}) {
+  const {
+    origin,
+    radius,
+    normal = new Vec3(0, 0, 1),
+    segments = 8,
+    duration = DEF_DUR,
+    color = DEF_COL,
+    offset = 0 }
+    = config;
+
+  const arbitrary = Math.abs(normal.z) < 0.99 ? new Vec3(0, 0, 1) : new Vec3(1, 0, 0);
+  const u = normal.cross(arbitrary).normal;
+  const v = normal.cross(u).normal;
+
+  const centerOffset = origin.add(normal.multiply(-offset));
+
+  let prevPoint: Vec3 | null = null;
+
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const point = centerOffset
+      .add(u.multiply(Math.cos(angle) * radius))
+      .add(v.multiply(Math.sin(angle) * radius));
+
+    if (prevPoint) {
+      Instance.DebugLine({ start: prevPoint, end: point, duration, color });
+    }
+    Instance.DebugLine({ start: centerOffset, end: point, duration, color });
+
+    prevPoint = point;
+  }
+}
+
+/** Draws the 3 axis of a 3d transformation */
+export function drawTransform(config: {
+  origin: Vec3;
+  up: Vec3;
+  right: Vec3;
+  forward: Vec3;
+  duration?: number;
+  size?: number;
+}) {
+  const { origin, up, right, forward, duration = DEF_DUR, size = 30 } = config;
+
+  Instance.DebugLine({ start: origin, end: origin.add(up.multiply(size)), duration: duration,
+    color: { r: 0, g: 0, b: 255 } });
+  Instance.DebugLine({ start: origin, end: origin.add(right.multiply(size)), duration: duration,
+    color: { r: 0, g: 255, b: 0 } });
+  Instance.DebugLine({ start: origin, end: origin.add(forward.multiply(size)), duration: duration,
+    color: { r: 255, g: 0, b: 0 } });
+}
+
+/** Draws the 3 axis of matrix transformation */
+export function drawMatrix(config: {
+  matrix: Matrix3x4;
+  size?: number;
+  duration?: number;
+}) {
+  const { matrix, duration = DEF_DUR, size = 30 } = config;
+
+  const origin = matrix.origin;
+
+  Instance.DebugLine({ start: origin, end: origin.add(matrix.up.multiply(size)), duration: duration,
+    color: { r: 0, g: 0, b: 255 } });
+  Instance.DebugLine({ start: origin, end: origin.add(matrix.right.multiply(size)), duration: duration,
+    color: { r: 0, g: 255, b: 0 } });
+  Instance.DebugLine({ start: origin, end: origin.add(matrix.forward.multiply(size)), duration: duration,
+    color: { r: 255, g: 0, b: 0 } });
+}
+
+/** Draws a solid square in the world */
+export function drawSolidSquare(config: {
+  origin: Vec3;
+  angle: Euler;
+  color?: { r: number; g: number; b: number; a?: number };
+  density?: number;
+  size: number;
+  duration?: number;
+}) {
+  const { origin, angle, color = DEF_COL, density = 10, size, duration = DEF_DUR } = config;
+
+  const right = angle.right;
+  const forward = angle.forward;
+  const half = size / 2;
+  const step = size / density;
+
+  for (let i = 0; i <= density; i++) {
+    const t = -half + i * step;
+
+    const upOffset = forward.scale(t);
+    const start = origin.add(right.scale(-half)).add(upOffset);
+    const end = origin.add(right.scale(half)).add(upOffset);
+
+    const rightOffset = right.scale(t);
+    const start2 = origin.add(forward.scale(-half)).add(rightOffset);
+    const end2 = origin.add(forward.scale(half)).add(rightOffset);
+
+    Instance.DebugLine({ start, end, color, duration });
+    Instance.DebugLine({ start: start2, end: end2, color, duration });
+  }
+}
+
+/** Draws an 3D arrow. */
+export function debugDrawArrow(config: {
+  origin: Vec3;
+  end: Vec3;
+  arrowHeadLength?: number;
+  arrowHeadWidth?: number;
+  color?: { r: number; g: number; b: number; a?: number };
+  density?: number;
+  duration?: number;
+}) {
+  const {
+    origin,
+    end,
+    arrowHeadLength = 10,
+    arrowHeadWidth = 5,
+    color = DEF_COL,
+    density = 25,
+    duration = DEF_DUR } = config;
+
+  const dir = end.subtract(origin);
+  const length = dir.length;
+  if (length < 0.001) {
+    return;
+  }
+  const forward = dir.normal;
+
+  const worldRight = new Vec3(0, 1, 0);
+  let right = forward.cross(worldRight);
+  if (right.length < 0.001) right = forward.cross(new Vec3(0, 0, 1));
+  right = right.normal;
+  const up = forward.cross(right).normal;
+
+  Instance.DebugLine({ start: origin, end: end, color, duration });
+
+  const arrowBase = end.subtract(forward.multiply(arrowHeadLength));
+
+  for (let i = 0; i < density; i++) {
+    const angle = (i / density) * Math.PI * 2;
+    const spokeDir = right.multiply(Math.cos(angle)).add(up.multiply(Math.sin(angle)));
+    const spokeLeft = arrowBase.add(spokeDir.multiply(-arrowHeadWidth));
+    const spokeRight = arrowBase.add(spokeDir.multiply(arrowHeadWidth));
+    Instance.DebugLine({ start: end, end: spokeLeft, color, duration });
+    Instance.DebugLine({ start: end, end: spokeRight, color, duration });
+  }
+}
+
+const daFont: Record<string, number[][]> = {
   ' ': [],
   'A': [
     [0, 0, 2, 6],
@@ -699,6 +858,7 @@ export interface Debug3DTextDrawOptions {
   color?: Color;
 }
 
+/** Draw text in the world. */
 function draw(options: Debug3DTextDrawOptions): void {
   const {
     text,
@@ -742,4 +902,5 @@ function draw(options: Debug3DTextDrawOptions): void {
   }
 }
 
+/** Draw text in the world. */
 export const Debug3DText = { draw };

@@ -60,6 +60,9 @@ importers:
       '@jest/globals':
         specifier: ^30.2.0
         version: 30.4.1
+      '@s2ze/debug':
+        specifier: workspace:*
+        version: link:../debug
       '@s2ze/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

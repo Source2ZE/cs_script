@@ -1,2 +1,3 @@
-export * from './debug3Dtext';
+export * from './debugdraw';
 export * from './print';
+
