@@ -76,6 +76,19 @@ importers:
         specifier: ^29.4.5
         version: 29.4.10(@babel/core@7.29.0)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.0))(jest-util@30.4.1)(jest@30.4.2(@types/node@25.9.1)(babel-plugin-macros@3.1.0))(typescript@5.9.3)
 
+  packages/prototype-extend:
+    dependencies:
+      '@s2ze/math':
+        specifier: ^2.19.3
+        version: 2.19.3
+    devDependencies:
+      '@s2ze/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@s2ze/types':
+        specifier: workspace:*
+        version: link:../types
+
   packages/scheduler:
     devDependencies:
       '@s2ze/tsconfig':
@@ -1097,6 +1110,9 @@ packages:
 
   '@s2ze/math@2.18.0':
     resolution: {integrity: sha512-LZvpWi8rQO691WTuNqogNGkGDzEVMlDZl4du/sUVVenwMqTB6mG36GZVoG4VO02QBDqtPTOKGnEwIUogzYFT1A==}
+
+  '@s2ze/math@2.19.3':
+    resolution: {integrity: sha512-/Y7JMiYKqM8F/h6hml7fc5G85/SqZEckC4PFxCShEgz7+Pr0CkGKPEzeSnYhnUVs0pcYuP00i+2tAlYB1Hk0DA==}
 
   '@s2ze/types@2.18.0':
     resolution: {integrity: sha512-va0Hl7li6gSPvFINHL1uCIJLfH40tH+0P6CLkqW1YYr/EV+SPzvZhlhTgUeELyuzX6ymPeTFPhZg/3PZAal3zA==}
@@ -4233,6 +4249,8 @@ snapshots:
   '@pkgr/core@0.2.9': {}
 
   '@s2ze/math@2.18.0': {}
+
+  '@s2ze/math@2.19.3': {}
 
   '@s2ze/types@2.18.0': {}
 
