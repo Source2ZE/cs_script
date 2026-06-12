@@ -196,12 +196,24 @@ export class Vec3 {
     return new Vec3(1, 0, 0);
   }
 
+  public static get Backward() {
+    return new Vec3(-1, 0, 0);
+  }
+
   public static get Right() {
+    return new Vec3(0, -1, 0);
+  }
+
+  public static get Left() {
     return new Vec3(0, 1, 0);
   }
 
   public static get Up() {
     return new Vec3(0, 0, 1);
+  }
+
+  public static get Down() {
+    return new Vec3(0, 0, -1);
   }
 
   constructor(x: number, y: number, z: number);
