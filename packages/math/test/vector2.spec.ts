@@ -217,9 +217,19 @@ describe('Vec2 class', () => {
       expect(Vec2.Up).toMatchObject({ x: 1, y: 0 });
     });
 
+    it('Vec2.Down creates a new instance', () => {
+      expect(Vec2.Down).not.toBe(Vec2.Down);
+      expect(Vec2.Down).toMatchObject({ x: -1, y: 0 });
+    });
+
     it('Vec2.Right creates a new instance', () => {
       expect(Vec2.Right).not.toBe(Vec2.Right);
-      expect(Vec2.Right).toMatchObject({ x: 0, y: 1 });
+      expect(Vec2.Right).toMatchObject({ x: 0, y: -1 });
+    });
+
+    it('Vec2.Left creates a new instance', () => {
+      expect(Vec2.Left).not.toBe(Vec2.Left);
+      expect(Vec2.Left).toMatchObject({ x: 0, y: 1 });
     });
   });
 });

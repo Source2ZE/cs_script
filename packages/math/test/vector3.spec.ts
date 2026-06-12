@@ -354,6 +354,14 @@ describe('Vec3 class', () => {
         z: 1,
       });
     });
+    it('Vec3.Down creates a new instance', () => {
+      expect(Vec3.Down).not.toBe(Vec3.Down);
+      expect(Vec3.Down).toMatchObject({
+        x: 0,
+        y: 0,
+        z: -1,
+      });
+    });
     it('Vec3.Forward creates a new instance', () => {
       expect(Vec3.Forward).not.toBe(Vec3.Forward);
       expect(Vec3.Forward).toMatchObject({
@@ -362,9 +370,25 @@ describe('Vec3 class', () => {
         z: 0,
       });
     });
+    it('Vec3.Backward creates a new instance', () => {
+      expect(Vec3.Backward).not.toBe(Vec3.Backward);
+      expect(Vec3.Backward).toMatchObject({
+        x: -1,
+        y: 0,
+        z: 0,
+      });
+    });
     it('Vec3.Right creates a new instance', () => {
       expect(Vec3.Right).not.toBe(Vec3.Right);
       expect(Vec3.Right).toMatchObject({
+        x: 0,
+        y: -1,
+        z: 0,
+      });
+    });
+    it('Vec3.Left creates a new instance', () => {
+      expect(Vec3.Left).not.toBe(Vec3.Left);
+      expect(Vec3.Left).toMatchObject({
         x: 0,
         y: 1,
         z: 0,

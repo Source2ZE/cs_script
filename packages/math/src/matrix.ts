@@ -234,22 +234,22 @@ export class Matrix3x4 {
     // normalise because users can not be trusted
     const up = vec.normal;
 
-    let right: Vec3;
+    let left: Vec3;
     if (Math.abs(up.dot(Vec3.Forward)) > 0.999) {
-      right = Vec3.Right.cross(up).normal;
+      left = Vec3.Left.cross(up).normal;
     } else {
-      right = up.cross(Vec3.Forward).normal;
+      left = up.cross(Vec3.Forward).normal;
     }
 
-    const fwd = right.cross(up).normal;
+    const fwd = left.cross(up).normal;
 
     this.m[0] = fwd.x;
     this.m[4] = fwd.y;
     this.m[8] = fwd.z;
 
-    this.m[1] = right.x;
-    this.m[5] = right.y;
-    this.m[9] = right.z;
+    this.m[1] = left.x;
+    this.m[5] = left.y;
+    this.m[9] = left.z;
 
     this.m[2] = up.x;
     this.m[6] = up.y;
