@@ -20,7 +20,7 @@ npm install @s2ze/math
 
 ## Usage
 
-Import the package once, at the top of your main file. It has no exports — the
+Import the package once, at the top of your main file. It has no exports, the
 import is there for its side effect of extending `Entity.prototype`.
 
 ```ts
@@ -50,22 +50,24 @@ All vector/angle properties are readable and writable. Writing teleports the
 entity. Reads return fresh copies, so mutating the returned value won't affect
 the entity until you assign it back.
 
-| Property               | Type        | Notes                                              |
-| ---------------------- | ----------- | -------------------------------------------------- |
-| `origin`               | `Vec3`      | World position.                                    |
-| `angles`               | `Euler`     | Eye angles for players, abs angles otherwise.      |
-| `matrix`               | `Matrix3x4` | Combined position + rotation.                      |
-| `scale`                | `number`    | Model scale. No-op on entities without a model.    |
-| `velocity`             | `Vec3`      | World-space velocity.                              |
-| `localVelocity`        | `Vec3`      | Velocity relative to the parent.                   |
-| `angularVelocity`      | `Vec3`      | World-space angular velocity.                      |
-| `localAngularVelocity` | `Vec3`      | Angular velocity relative to the parent.           |
-| `eyePosition`          | `Vec3`      | Read-only.                                         |
-| `eyeAngles`            | `Euler`     | Read-only.                                         |
-
-Direction vectors derived from the current orientation, also read/write:
-
-`forward`, `backward`, `left`, `right`, `up`, `down` — all `Vec3`.
+| Property               | Type        | Notes                                           |
+| ---------------------- | ----------- | ----------------------------------------------- |
+| `origin`               | `Vec3`      | World position.                                 |
+| `angles`               | `Euler`     | Eye angles for players, abs angles otherwise.   |
+| `matrix`               | `Matrix3x4` | Combined position + rotation.                   |
+| `scale`                | `number`    | Model scale. No-op on entities without a model. |
+| `velocity`             | `Vec3`      | World-space velocity.                           |
+| `localVelocity`        | `Vec3`      | Velocity relative to the parent.                |
+| `angularVelocity`      | `Vec3`      | World-space angular velocity.                   |
+| `localAngularVelocity` | `Vec3`      | Angular velocity relative to the parent.        |
+| `eyePosition`          | `Vec3`      | Read-only.                                      |
+| `eyeAngles`            | `Euler`     | Read-only.                                      |
+| `forward`              | `Vec3`      | Read/write. Vector pointing forward.            |
+| `backward`             | `Vec3`      | Read/write. Vector pointing backward.           |
+| `left`                 | `Vec3`      | Read/write. Vector pointing left.               |
+| `right`                | `Vec3`      | Read/write. Vector pointing right.              |
+| `up`                   | `Vec3`      | Read/write. Vector pointing up.                 |
+| `down`                 | `Vec3`      | Read/write. Vector pointing down.               |
 
 ### Methods
 
