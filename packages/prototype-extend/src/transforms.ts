@@ -51,7 +51,7 @@ class Transform {
   }
 
   get angles(): Readonly<Euler> {
-    const angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    const angles = this.getAngles();
     this._matrix.angles = angles;
     return angles;
   }
@@ -75,15 +75,17 @@ class Transform {
   }
 
   get scale(): number {
-    const modelEnt = this.entity as BaseModelEntity;
-    this._scale = modelEnt.GetModelScale() ?? this._scale;
+    if (this.entity instanceof BaseModelEntity) {
+      this._scale = this.entity.GetModelScale();
+    }
     return this._scale;
   }
 
   set scale(scale: number) {
     this._scale = scale;
-    const modelEnt = this.entity as BaseModelEntity;
-    modelEnt?.SetModelScale(this._scale);
+    if (this.entity instanceof BaseModelEntity) {
+      this.entity.SetModelScale(this._scale);
+    }
   }
 
   get velocity(): Readonly<Vec3> {
@@ -142,7 +144,7 @@ class Transform {
   }
 
   get left(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.left;
   }
 
@@ -152,7 +154,7 @@ class Transform {
   }
 
   get right(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.right;
   }
 
@@ -162,7 +164,7 @@ class Transform {
   }
 
   get up(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.up;
   }
 
@@ -177,12 +179,12 @@ class Transform {
   }
 
   get down(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.down;
   }
 
   get forward(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.forward;
   }
 
@@ -192,7 +194,7 @@ class Transform {
   }
 
   get backward(): Readonly<Vec3> {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     return this._matrix.backward;
   }
 
@@ -219,10 +221,18 @@ class Transform {
       localAngularVelocity = ${this._localAngularVelocity}`;
   }
 
+  private getAngles(): Euler {
+    return new Euler(
+      this.entity instanceof CSPlayerPawn ? this.entity.GetEyeAngles() : this.entity.GetAbsAngles(),
+    );
+  }
+
   private updateFromEnt() {
-    this._matrix.angles = new Euler((this.entity as CSPlayerPawn).GetEyeAngles() ?? this.entity.GetAbsAngles());
+    this._matrix.angles = this.getAngles();
     this._matrix.origin = new Vec3(this.entity.GetAbsOrigin());
-    this._scale = (this.entity as BaseModelEntity)?.GetModelScale() ?? this._scale;
+    if (this.entity instanceof BaseModelEntity) {
+      this._scale = this.entity.GetModelScale();
+    }
     this._velocity = new Vec3(this.entity.GetAbsVelocity());
     this._localVelocity = new Vec3(this.entity.GetLocalVelocity());
     this._angularVelocity = new Vec3(this.entity.GetAbsAngularVelocity());
