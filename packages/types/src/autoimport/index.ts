@@ -1,7 +1,7 @@
 /**
  * This file, `point_script.d.ts`, documents the JavaScript API for cs_script scripts attached to point_script entities.
  * This file is a TypeScript Declaration file. https://www.typescriptlang.org/docs/handbook/2/type-declarations.html#dts-files
- * This file can be used by various editors to provide tooling while editing JavaScript. https://www.typescriptlang.org/docs/handbook/intro-to-js-ts.html
+ * This file can be used by various editors to provide tooling while editing JavaScript. https://www.typescriptlang.org/docs/handbook/intro-to-js-ts.html 
  * Next to this file is a `tsconfig.json` file configured for editing JavaScript targetting the current version used by CS2.
  * Place copies of these two files, `point_script.d.ts` and `tsconfig.json`, next to your scripts and some editors will begin providing tooling without further configuration.
  * These two files will be maintained as the cs_script API changes or the JavaScript version in CS2 is updated.
@@ -10,13 +10,13 @@
 
 /**
  * `"cs_script/point_script"` is the module provided to scripts loaded for point_script entities.
- *
+ * 
  * # Setup:
  * - Create a JavaScript file (.js) that imports this module.
  *      - See `hello.js` for an example.
  * - Create a point_script entity in your map and set its cs_script field to reference your JavaScript file as a vjs asset.
  *      - See `script_zoo.vmap`. There is a point_script entity in there named "hello_cs_script" that runs `hello.js`. There are a handful of other examples as well.
- *
+ * 
  * # Execution:
  * - The compiled version of your script (.vjs_c) will be loaded during map load.
  * - When the point_script entity is spawned it will execute all code at the top level scope of your script.
@@ -28,7 +28,7 @@
  * - Entity variables are stable. Two variables referring to the same entity will be reference equals (===).
  * - Extra values attached to an entity variable will still be there if the variable is fetched again.
  * - A map can have multiple point_script entities. Each script will run with its own Instance, set of globals, and set of entity variables.
- *
+ * 
  * # Tools Mode:
  * - In tools mode, saving changes to your script will recompile your file, clear all registered callbacks, and re-run the top level scope of your script.
  * - Global variables and instances of entity variables will persist across reloads.
@@ -78,6 +78,16 @@ declare module "cs_script/point_script"
         /** Set when the OnThink callback should next be run. The exact time will be on the tick nearest to the specified time, which may be earlier or later. */
         SetNextThink(time: number): void;
 
+        /**
+         * Queue up a callback to be invoked once, after all entities have executed their think functions this tick (eg. player input has been handled, projectiles have moved).
+         * This can be useful for delaying until a clean moment when an entity isn't mid-computation and might ignore or misinterpret.
+         * This can be useful for delaying until the world is in a consistent state.
+         * Callbacks queued up during a post entity think callback will be invoked in the same tick.
+         * @experimental This method is experimental and may experience breaking changes.
+         * Please send feedback to CSGOTeamFeedback@valvesoftware.com with "cs_script Feedback" in the subject line.
+         */
+        QueueAfterThinks( callback: () => void ): void;
+
         /** Called when the point_script entity is activated */
         OnActivate(callback: () => void): void;
         /** Called when input RunScriptInput is triggered on the point_script entity with a parameter value that matches name. */
@@ -115,7 +125,7 @@ declare module "cs_script/point_script"
          * Return `{ abort: true }` to cancel the damage event.
          */
         OnModifyPlayerDamage(callback: (event: ModifyPlayerDamageEvent) => ModfiyPlayerDamageResult | void): void;
-        /**
+        /** 
          * Called when a player has taken damage.
          */
         OnPlayerDamage(callback: (event: PlayerDamageEvent) => void): void;
@@ -139,6 +149,8 @@ declare module "cs_script/point_script"
          * This will be called for all impacts of a bullet before any player damage events are called.
          */
         OnBulletImpact(callback: (event: { weapon: CSWeaponBase, position: Vector, hitEntity: Entity }) => void): void;
+        /** Called when a weapon is dropped. */
+        OnWeaponDrop(callback: (event: { weapon: CSWeaponBase }) => void): void;
         /** Called when a grenade is thrown. `projectile` is the newly created grenade projectile. */
         OnGrenadeThrow(callback: (event: { weapon: CSWeaponBase, projectile: Entity }) => void): void;
         /** Called when a grenade bounces off a surface. `bounces` is the number of bounces so far. */
@@ -551,6 +563,7 @@ declare module "cs_script/point_script"
     export class CSWeaponBase extends BaseModelEntity {
         GetData(): CSWeaponData;
         GetOwner(): CSPlayerPawn | undefined;
+        GetOriginalOwner(): CSPlayerPawn | undefined;
         GetClipAmmo(): number;
         SetClipAmmo(ammo: number): void;
         GetReserveAmmo(): number;
@@ -645,12 +658,3 @@ declare module "cs_script/point_script"
     /** @deprecated This enum will be removed in a future update */
     export enum CSDamageType { }
 }
-
-/**
- * @deprecated This unreleased feature will be removed in a future update as will the ability to load vts assets.
- */
-declare module "server/serverpointentity" { }
-/**
- * @deprecated This unreleased feature will be removed in a future update as will the ability to load vts assets.
- */
-declare module "server/cspointscript" { }
