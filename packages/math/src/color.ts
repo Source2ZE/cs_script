@@ -94,6 +94,15 @@ export class ColorUtils {
     return new Color(color.r, color.g, color.b, x);
   }
 
+  public static fromRgba(rgba: number): Color {
+    return new Color(
+      (rgba >>> 24) & 0xff,
+      (rgba >>> 16) & 0xff,
+      (rgba >>> 8) & 0xff,
+      rgba & 0xff,
+    );
+  }
+
   // https://bottosson.github.io/posts/oklab/
   public static LinearSrgbToOklab(c: Color): LABColor {
     const l = 0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b;
@@ -155,6 +164,157 @@ export class Color {
       this.a = a!;
     }
   }
+
+  /**
+   * Creates a Color from a packed 0xRRGGBBAA integer, e.g. 0x00FF00FF for opaque green
+   */
+  public static fromRgba(rgba: number): Color {
+    return ColorUtils.fromRgba(rgba);
+  }
+
+  // web colors
+  public static get Transparent(): Color { return Color.fromRgba(0xFFFFFF00); }
+  public static get AliceBlue(): Color { return Color.fromRgba(0xF0F8FFFF); }
+  public static get AntiqueWhite(): Color { return Color.fromRgba(0xFAEBD7FF); }
+  public static get Aqua(): Color { return Color.fromRgba(0x00FFFFFF); }
+  public static get Aquamarine(): Color { return Color.fromRgba(0x7FFFD4FF); }
+  public static get Azure(): Color { return Color.fromRgba(0xF0FFFFFF); }
+  public static get Beige(): Color { return Color.fromRgba(0xF5F5DCFF); }
+  public static get Bisque(): Color { return Color.fromRgba(0xFFE4C4FF); }
+  public static get Black(): Color { return Color.fromRgba(0x000000FF); }
+  public static get BlanchedAlmond(): Color { return Color.fromRgba(0xFFEBCDFF); }
+  public static get Blue(): Color { return Color.fromRgba(0x0000FFFF); }
+  public static get BlueViolet(): Color { return Color.fromRgba(0x8A2BE2FF); }
+  public static get Brown(): Color { return Color.fromRgba(0xA52A2AFF); }
+  public static get BurlyWood(): Color { return Color.fromRgba(0xDEB887FF); }
+  public static get CadetBlue(): Color { return Color.fromRgba(0x5F9EA0FF); }
+  public static get Chartreuse(): Color { return Color.fromRgba(0x7FFF00FF); }
+  public static get Chocolate(): Color { return Color.fromRgba(0xD2691EFF); }
+  public static get Coral(): Color { return Color.fromRgba(0xFF7F50FF); }
+  public static get CornflowerBlue(): Color { return Color.fromRgba(0x6495EDFF); }
+  public static get Cornsilk(): Color { return Color.fromRgba(0xFFF8DCFF); }
+  public static get Crimson(): Color { return Color.fromRgba(0xDC143CFF); }
+  public static get Cyan(): Color { return Color.fromRgba(0x00FFFFFF); }
+  public static get DarkBlue(): Color { return Color.fromRgba(0x00008BFF); }
+  public static get DarkCyan(): Color { return Color.fromRgba(0x008B8BFF); }
+  public static get DarkGoldenrod(): Color { return Color.fromRgba(0xB8860BFF); }
+  public static get DarkGray(): Color { return Color.fromRgba(0xA9A9A9FF); }
+  public static get DarkGreen(): Color { return Color.fromRgba(0x006400FF); }
+  public static get DarkKhaki(): Color { return Color.fromRgba(0xBDB76BFF); }
+  public static get DarkMagenta(): Color { return Color.fromRgba(0x8B008BFF); }
+  public static get DarkOliveGreen(): Color { return Color.fromRgba(0x556B2FFF); }
+  public static get DarkOrange(): Color { return Color.fromRgba(0xFF8C00FF); }
+  public static get DarkOrchid(): Color { return Color.fromRgba(0x9932CCFF); }
+  public static get DarkRed(): Color { return Color.fromRgba(0x8B0000FF); }
+  public static get DarkSalmon(): Color { return Color.fromRgba(0xE9967AFF); }
+  public static get DarkSeaGreen(): Color { return Color.fromRgba(0x8FBC8FFF); }
+  public static get DarkSlateBlue(): Color { return Color.fromRgba(0x483D8BFF); }
+  public static get DarkSlateGray(): Color { return Color.fromRgba(0x2F4F4FFF); }
+  public static get DarkTurquoise(): Color { return Color.fromRgba(0x00CED1FF); }
+  public static get DarkViolet(): Color { return Color.fromRgba(0x9400D3FF); }
+  public static get DeepPink(): Color { return Color.fromRgba(0xFF1493FF); }
+  public static get DeepSkyBlue(): Color { return Color.fromRgba(0x00BFFFFF); }
+  public static get DimGray(): Color { return Color.fromRgba(0x696969FF); }
+  public static get DodgerBlue(): Color { return Color.fromRgba(0x1E90FFFF); }
+  public static get Firebrick(): Color { return Color.fromRgba(0xB22222FF); }
+  public static get FloralWhite(): Color { return Color.fromRgba(0xFFFAF0FF); }
+  public static get ForestGreen(): Color { return Color.fromRgba(0x228B22FF); }
+  public static get Fuchsia(): Color { return Color.fromRgba(0xFF00FFFF); }
+  public static get Gainsboro(): Color { return Color.fromRgba(0xDCDCDCFF); }
+  public static get GhostWhite(): Color { return Color.fromRgba(0xF8F8FFFF); }
+  public static get Gold(): Color { return Color.fromRgba(0xFFD700FF); }
+  public static get Goldenrod(): Color { return Color.fromRgba(0xDAA520FF); }
+  public static get Gray(): Color { return Color.fromRgba(0x808080FF); }
+  public static get Green(): Color { return Color.fromRgba(0x008000FF); }
+  public static get GreenYellow(): Color { return Color.fromRgba(0xADFF2FFF); }
+  public static get Honeydew(): Color { return Color.fromRgba(0xF0FFF0FF); }
+  public static get HotPink(): Color { return Color.fromRgba(0xFF69B4FF); }
+  public static get IndianRed(): Color { return Color.fromRgba(0xCD5C5CFF); }
+  public static get Indigo(): Color { return Color.fromRgba(0x4B0082FF); }
+  public static get Ivory(): Color { return Color.fromRgba(0xFFFFF0FF); }
+  public static get Khaki(): Color { return Color.fromRgba(0xF0E68CFF); }
+  public static get Lavender(): Color { return Color.fromRgba(0xE6E6FAFF); }
+  public static get LavenderBlush(): Color { return Color.fromRgba(0xFFF0F5FF); }
+  public static get LawnGreen(): Color { return Color.fromRgba(0x7CFC00FF); }
+  public static get LemonChiffon(): Color { return Color.fromRgba(0xFFFACDFF); }
+  public static get LightBlue(): Color { return Color.fromRgba(0xADD8E6FF); }
+  public static get LightCoral(): Color { return Color.fromRgba(0xF08080FF); }
+  public static get LightCyan(): Color { return Color.fromRgba(0xE0FFFFFF); }
+  public static get LightGoldenrodYellow(): Color { return Color.fromRgba(0xFAFAD2FF); }
+  public static get LightGray(): Color { return Color.fromRgba(0xD3D3D3FF); }
+  public static get LightGreen(): Color { return Color.fromRgba(0x90EE90FF); }
+  public static get LightPink(): Color { return Color.fromRgba(0xFFB6C1FF); }
+  public static get LightSalmon(): Color { return Color.fromRgba(0xFFA07AFF); }
+  public static get LightSeaGreen(): Color { return Color.fromRgba(0x20B2AAFF); }
+  public static get LightSkyBlue(): Color { return Color.fromRgba(0x87CEFAFF); }
+  public static get LightSlateGray(): Color { return Color.fromRgba(0x778899FF); }
+  public static get LightSteelBlue(): Color { return Color.fromRgba(0xB0C4DEFF); }
+  public static get LightYellow(): Color { return Color.fromRgba(0xFFFFE0FF); }
+  public static get Lime(): Color { return Color.fromRgba(0x00FF00FF); }
+  public static get LimeGreen(): Color { return Color.fromRgba(0x32CD32FF); }
+  public static get Linen(): Color { return Color.fromRgba(0xFAF0E6FF); }
+  public static get Magenta(): Color { return Color.fromRgba(0xFF00FFFF); }
+  public static get Maroon(): Color { return Color.fromRgba(0x800000FF); }
+  public static get MediumAquamarine(): Color { return Color.fromRgba(0x66CDAAFF); }
+  public static get MediumBlue(): Color { return Color.fromRgba(0x0000CDFF); }
+  public static get MediumOrchid(): Color { return Color.fromRgba(0xBA55D3FF); }
+  public static get MediumPurple(): Color { return Color.fromRgba(0x9370DBFF); }
+  public static get MediumSeaGreen(): Color { return Color.fromRgba(0x3CB371FF); }
+  public static get MediumSlateBlue(): Color { return Color.fromRgba(0x7B68EEFF); }
+  public static get MediumSpringGreen(): Color { return Color.fromRgba(0x00FA9AFF); }
+  public static get MediumTurquoise(): Color { return Color.fromRgba(0x48D1CCFF); }
+  public static get MediumVioletRed(): Color { return Color.fromRgba(0xC71585FF); }
+  public static get MidnightBlue(): Color { return Color.fromRgba(0x191970FF); }
+  public static get MintCream(): Color { return Color.fromRgba(0xF5FFFAFF); }
+  public static get MistyRose(): Color { return Color.fromRgba(0xFFE4E1FF); }
+  public static get Moccasin(): Color { return Color.fromRgba(0xFFE4B5FF); }
+  public static get NavajoWhite(): Color { return Color.fromRgba(0xFFDEADFF); }
+  public static get Navy(): Color { return Color.fromRgba(0x000080FF); }
+  public static get OldLace(): Color { return Color.fromRgba(0xFDF5E6FF); }
+  public static get Olive(): Color { return Color.fromRgba(0x808000FF); }
+  public static get OliveDrab(): Color { return Color.fromRgba(0x6B8E23FF); }
+  public static get Orange(): Color { return Color.fromRgba(0xFFA500FF); }
+  public static get OrangeRed(): Color { return Color.fromRgba(0xFF4500FF); }
+  public static get Orchid(): Color { return Color.fromRgba(0xDA70D6FF); }
+  public static get PaleGoldenrod(): Color { return Color.fromRgba(0xEEE8AAFF); }
+  public static get PaleGreen(): Color { return Color.fromRgba(0x98FB98FF); }
+  public static get PaleTurquoise(): Color { return Color.fromRgba(0xAFEEEEFF); }
+  public static get PaleVioletRed(): Color { return Color.fromRgba(0xDB7093FF); }
+  public static get PapayaWhip(): Color { return Color.fromRgba(0xFFEFD5FF); }
+  public static get PeachPuff(): Color { return Color.fromRgba(0xFFDAB9FF); }
+  public static get Peru(): Color { return Color.fromRgba(0xCD853FFF); }
+  public static get Pink(): Color { return Color.fromRgba(0xFFC0CBFF); }
+  public static get Plum(): Color { return Color.fromRgba(0xDDA0DDFF); }
+  public static get PowderBlue(): Color { return Color.fromRgba(0xB0E0E6FF); }
+  public static get Purple(): Color { return Color.fromRgba(0x800080FF); }
+  public static get RebeccaPurple(): Color { return Color.fromRgba(0x663399FF); }
+  public static get Red(): Color { return Color.fromRgba(0xFF0000FF); }
+  public static get RosyBrown(): Color { return Color.fromRgba(0xBC8F8FFF); }
+  public static get RoyalBlue(): Color { return Color.fromRgba(0x4169E1FF); }
+  public static get SaddleBrown(): Color { return Color.fromRgba(0x8B4513FF); }
+  public static get Salmon(): Color { return Color.fromRgba(0xFA8072FF); }
+  public static get SandyBrown(): Color { return Color.fromRgba(0xF4A460FF); }
+  public static get SeaGreen(): Color { return Color.fromRgba(0x2E8B57FF); }
+  public static get SeaShell(): Color { return Color.fromRgba(0xFFF5EEFF); }
+  public static get Sienna(): Color { return Color.fromRgba(0xA0522DFF); }
+  public static get Silver(): Color { return Color.fromRgba(0xC0C0C0FF); }
+  public static get SkyBlue(): Color { return Color.fromRgba(0x87CEEBFF); }
+  public static get SlateBlue(): Color { return Color.fromRgba(0x6A5ACDFF); }
+  public static get SlateGray(): Color { return Color.fromRgba(0x708090FF); }
+  public static get Snow(): Color { return Color.fromRgba(0xFFFAFAFF); }
+  public static get SpringGreen(): Color { return Color.fromRgba(0x00FF7FFF); }
+  public static get SteelBlue(): Color { return Color.fromRgba(0x4682B4FF); }
+  public static get Tan(): Color { return Color.fromRgba(0xD2B48CFF); }
+  public static get Teal(): Color { return Color.fromRgba(0x008080FF); }
+  public static get Thistle(): Color { return Color.fromRgba(0xD8BFD8FF); }
+  public static get Tomato(): Color { return Color.fromRgba(0xFF6347FF); }
+  public static get Turquoise(): Color { return Color.fromRgba(0x40E0D0FF); }
+  public static get Violet(): Color { return Color.fromRgba(0xEE82EEFF); }
+  public static get Wheat(): Color { return Color.fromRgba(0xF5DEB3FF); }
+  public static get White(): Color { return Color.fromRgba(0xFFFFFFFF); }
+  public static get WhiteSmoke(): Color { return Color.fromRgba(0xF5F5F5FF); }
+  public static get Yellow(): Color { return Color.fromRgba(0xFFFF00FF); }
+  public static get YellowGreen(): Color { return Color.fromRgba(0x9ACD32FF); }
 
   /**
    * Returns the complement color (255 - component), leaving alpha untouched
