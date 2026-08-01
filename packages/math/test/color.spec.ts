@@ -42,8 +42,10 @@ describe('Color class', () => {
     it('matches the web color values', () => {
       expect(Color.AliceBlue).toMatchObject({ r: 240, g: 248, b: 255, a: 255 });
       expect(Color.RebeccaPurple).toMatchObject({ r: 102, g: 51, b: 153, a: 255 });
-      expect(Color.Green).toMatchObject({ r: 0, g: 128, b: 0, a: 255 });
-      expect(Color.Lime).toMatchObject({ r: 0, g: 255, b: 0, a: 255 });
+      // green and lime are swapped compared to usual web colors,
+      // because otherwise green not actually being 255 green is kinda stupid
+      expect(Color.Green).toMatchObject({ r: 0, g: 255, b: 0, a: 255 });
+      expect(Color.Lime).toMatchObject({ r: 0, g: 128, b: 0, a: 255 });
     });
 
     it('Transparent is white with zero alpha', () => {
@@ -220,7 +222,7 @@ describe('Color class', () => {
     });
 
     it('weights green heaviest', () => {
-      expect(Color.Lime.luminance).toBeGreaterThan(Color.Red.luminance);
+      expect(Color.Green.luminance).toBeGreaterThan(Color.Red.luminance);
       expect(Color.Red.luminance).toBeGreaterThan(Color.Blue.luminance);
     });
 
