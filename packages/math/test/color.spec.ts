@@ -153,6 +153,26 @@ describe('Color class', () => {
     });
   });
 
+  describe('srgbToLinear / linearToSrgb', () => {
+    it('keeps black and white fixed', () => {
+      expect(Color4.White.linear.equals(Color4.White, 0.001)).toBe(true);
+      expect(Color4.Black.linear.equals(Color4.Black, 0.001)).toBe(true);
+    });
+
+    it('decodes srgb mid gray to ~55 linear', () => {
+      expect(new Color4(128, 128, 128).linear.r).toBeCloseTo(55, 0);
+    });
+
+    it('round-trips', () => {
+      const color = new Color4(200, 60, 120, 40);
+      expect(color.linear.srgb.equals(color, 0.001)).toBe(true);
+    });
+
+    it('does not touch alpha', () => {
+      expect(new Color4(10, 20, 30, 77).linear.a).toBe(77);
+    });
+  });
+
   describe('oklab conversion', () => {
     it('round-trips linear srgb through oklab', () => {
       const color = new Color4(200, 60, 120, 255);

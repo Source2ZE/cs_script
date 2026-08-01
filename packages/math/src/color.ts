@@ -93,8 +93,8 @@ export class ColorUtils {
       t = MathUtils.clamp(t, 0, 1);
     }
 
-    const alab = ColorUtils.LinearSrgbToOklab(a);
-    const blab = ColorUtils.LinearSrgbToOklab(b);
+    const alab = ColorUtils.LinearSrgbToOklab(ColorUtils.srgbToLinear(a));
+    const blab = ColorUtils.LinearSrgbToOklab(ColorUtils.srgbToLinear(b));
 
     const resultlab: LABColor = {
       l: alab.l + (blab.l - alab.l) * t,
@@ -103,9 +103,9 @@ export class ColorUtils {
     };
 
     // interpolating in oklab can land slightly outside the srgb gamut
-    return ColorUtils.clamp(
+    return ColorUtils.clamp(ColorUtils.linearToSrgb(
       ColorUtils.OklabToLinearSrgb(resultlab, a.a + (b.a - a.a) * t),
-    );
+    ));
   }
 
   /**
@@ -129,11 +129,13 @@ export class ColorUtils {
    * Rotates the hue by the given angle in degrees, preserving lightness and alpha
    */
   public static hueShift(color: Color4, degrees: number): Color4 {
-    const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
-    lch.h += degrees;
-    return ColorUtils.clamp(
-      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    const lch = ColorUtils.OklabToOklch(
+      ColorUtils.LinearSrgbToOklab(ColorUtils.srgbToLinear(color)),
     );
+    lch.h += degrees;
+    return ColorUtils.clamp(ColorUtils.linearToSrgb(
+      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    ));
   }
 
   /**
@@ -154,11 +156,13 @@ export class ColorUtils {
    * Scales the chroma (colorfulness) by 1 + amount, e.g. 0.5 for 50% more saturated
    */
   public static saturate(color: Color4, amount: number): Color4 {
-    const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
-    lch.c = Math.max(lch.c * (1 + amount), 0);
-    return ColorUtils.clamp(
-      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    const lch = ColorUtils.OklabToOklch(
+      ColorUtils.LinearSrgbToOklab(ColorUtils.srgbToLinear(color)),
     );
+    lch.c = Math.max(lch.c * (1 + amount), 0);
+    return ColorUtils.clamp(ColorUtils.linearToSrgb(
+      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    ));
   }
 
   /**
@@ -169,18 +173,20 @@ export class ColorUtils {
   }
 
   /**
-   * Perceived brightness 0-255, using Rec. 709 luma weights
+   * Relative luminance 0-255 (Rec. 709 weights applied in linear light,
+   * 0 for black, 255 for white)
    */
   public static luminance(color: Color4): number {
-    return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+    const linear = ColorUtils.srgbToLinear(color);
+    return 0.2126 * linear.r + 0.7152 * linear.g + 0.0722 * linear.b;
   }
 
   /**
    * Converts the color to a gray of the same perceived brightness, keeping alpha
    */
   public static grayscale(color: Color4): Color4 {
-    const luminance = ColorUtils.luminance(color);
-    return new Color4(luminance, luminance, luminance, color.a);
+    const gray = ColorUtils.channelToSrgb(ColorUtils.luminance(color));
+    return new Color4(gray, gray, gray, color.a);
   }
 
   /**
@@ -250,6 +256,41 @@ export class ColorUtils {
     const c = ColorUtils.round(color);
     const hex = (component: number) => component.toString(16).padStart(2, '0');
     return `#${hex(c.r)}${hex(c.g)}${hex(c.b)}${c.a === 255 ? '' : hex(c.a)}`;
+  }
+
+  private static channelToLinear(value: number): number {
+    const n = value / 255;
+    return (n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4) * 255;
+  }
+
+  private static channelToSrgb(value: number): number {
+    const n = value / 255;
+    return (n <= 0.0031308 ? n * 12.92 : 1.055 * n ** (1 / 2.4) - 0.055) * 255;
+  }
+
+  /**
+   * Converts a gamma-encoded srgb color to linear light
+   * (alpha is coverage, not light, so it stays untouched)
+   */
+  public static srgbToLinear(color: Color4): Color4 {
+    return new Color4(
+      ColorUtils.channelToLinear(color.r),
+      ColorUtils.channelToLinear(color.g),
+      ColorUtils.channelToLinear(color.b),
+      color.a,
+    );
+  }
+
+  /**
+   * Converts a linear light color back to gamma-encoded srgb, alpha untouched
+   */
+  public static linearToSrgb(color: Color4): Color4 {
+    return new Color4(
+      ColorUtils.channelToSrgb(color.r),
+      ColorUtils.channelToSrgb(color.g),
+      ColorUtils.channelToSrgb(color.b),
+      color.a,
+    );
   }
 
   // https://bottosson.github.io/posts/oklab/
@@ -594,6 +635,20 @@ export class Color4 {
   }
 
   /**
+   * assuming this is an srgb encoded color, convert it to linear
+   */
+  public get linear(): Color4 {
+    return ColorUtils.srgbToLinear(this);
+  }
+
+  /**
+   * assuming this is a linear encoded color, convert it to srgb
+   */
+  public get srgb(): Color4 {
+    return ColorUtils.linearToSrgb(this);
+  }
+
+  /**
    * Rotates the hue by the given angle in degrees, preserving lightness and alpha
    */
   public hueShift(degrees: number): Color4 {
@@ -629,7 +684,7 @@ export class Color4 {
   }
 
   /**
-   * Perceived brightness 0-255
+   * Relative luminance 0-255 (0 for black, 255 for white)
    */
   public get luminance(): number {
     return ColorUtils.luminance(this);
