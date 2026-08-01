@@ -1,3 +1,4 @@
+export * from './color';
 export * from './curve';
 export * from './euler';
 export * from './math';
