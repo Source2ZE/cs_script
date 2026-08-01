@@ -5,7 +5,7 @@ type LABColor = { l: number; a: number; b: number };
 type LCHColor = { l: number; c: number; h: number };
 
 export class ColorUtils {
-  public static equals(a: Color, b: Color, epsilon: number = 0): boolean {
+  public static equals(a: Color4, b: Color4, epsilon: number = 0): boolean {
     return (
       Math.abs(a.r - b.r) <= epsilon
       && Math.abs(a.g - b.g) <= epsilon
@@ -14,26 +14,26 @@ export class ColorUtils {
     );
   }
 
-  public static add(a: Color, b: Color): Color {
-    return new Color(a.r + b.r, a.g + b.g, a.b + b.b, a.a + b.a);
+  public static add(a: Color4, b: Color4): Color4 {
+    return new Color4(a.r + b.r, a.g + b.g, a.b + b.b, a.a + b.a);
   }
 
-  public static subtract(a: Color, b: Color): Color {
-    return new Color(a.r - b.r, a.g - b.g, a.b - b.b, a.a - b.a);
+  public static subtract(a: Color4, b: Color4): Color4 {
+    return new Color4(a.r - b.r, a.g - b.g, a.b - b.b, a.a - b.a);
   }
 
-  public static scale(color: Color, scale: number): Color {
-    return new Color(color.r * scale, color.g * scale, color.b * scale, color.a * scale);
+  public static scale(color: Color4, scale: number): Color4 {
+    return new Color4(color.r * scale, color.g * scale, color.b * scale, color.a * scale);
   }
 
-  public static multiply(a: Color, b: Color): Color {
-    return new Color(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
+  public static multiply(a: Color4, b: Color4): Color4 {
+    return new Color4(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
   }
 
-  public static divide(color: Color, divider: Color | number): Color {
+  public static divide(color: Color4, divider: Color4 | number): Color4 {
     if (typeof divider === 'number') {
       if (divider === 0) throw Error('Division by zero');
-      return new Color(
+      return new Color4(
         color.r / divider,
         color.g / divider,
         color.b / divider,
@@ -42,7 +42,7 @@ export class ColorUtils {
     } else {
       if (divider.r === 0 || divider.g === 0 || divider.b === 0 || divider.a === 0)
         throw Error('Division by zero');
-      return new Color(
+      return new Color4(
         color.r / divider.r,
         color.g / divider.g,
         color.b / divider.b,
@@ -51,15 +51,15 @@ export class ColorUtils {
     }
   }
 
-  public static inverse(color: Color): Color {
-    return new Color(255 - color.r, 255 - color.g, 255 - color.b, color.a);
+  public static inverse(color: Color4): Color4 {
+    return new Color4(255 - color.r, 255 - color.g, 255 - color.b, color.a);
   }
 
   /**
    * Clamps each component to [0, 255]
    */
-  public static clamp(color: Color): Color {
-    return new Color(
+  public static clamp(color: Color4): Color4 {
+    return new Color4(
       MathUtils.clamp(color.r, 0, 255),
       MathUtils.clamp(color.g, 0, 255),
       MathUtils.clamp(color.b, 0, 255),
@@ -70,9 +70,9 @@ export class ColorUtils {
   /**
    * Rounds each component to the nearest integer and clamps it to [0, 255]
    */
-  public static round(color: Color): Color {
+  public static round(color: Color4): Color4 {
     return ColorUtils.clamp(
-      new Color(
+      new Color4(
         Math.round(color.r),
         Math.round(color.g),
         Math.round(color.b),
@@ -83,11 +83,11 @@ export class ColorUtils {
 
   // uses oklab to get better gradients when interpolating
   public static lerp(
-    a: Color,
-    b: Color,
+    a: Color4,
+    b: Color4,
     fraction: number,
     clamp: boolean = true,
-  ): Color {
+  ): Color4 {
     let t = fraction;
     if (clamp) {
       t = MathUtils.clamp(t, 0, 1);
@@ -112,12 +112,12 @@ export class ColorUtils {
    * Samples a multi-stop gradient at a 0.0-1.0 fraction, interpolating in oklab
    */
   public static gradient(
-    colors: readonly Color[],
+    colors: readonly Color4[],
     fraction: number,
     clamp: boolean = true,
-  ): Color {
+  ): Color4 {
     if (colors.length === 0) throw Error('Gradient requires at least one color');
-    if (colors.length === 1) return new Color(colors[0]);
+    if (colors.length === 1) return new Color4(colors[0]);
 
     const t = clamp ? MathUtils.clamp(fraction, 0, 1) : fraction;
     const scaled = t * (colors.length - 1);
@@ -128,7 +128,7 @@ export class ColorUtils {
   /**
    * Rotates the hue by the given angle in degrees, preserving lightness and alpha
    */
-  public static hueShift(color: Color, degrees: number): Color {
+  public static hueShift(color: Color4, degrees: number): Color4 {
     const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
     lch.h += degrees;
     return ColorUtils.clamp(
@@ -139,21 +139,21 @@ export class ColorUtils {
   /**
    * Mixes the color towards white in oklab, amount 0-1
    */
-  public static lighten(color: Color, amount: number): Color {
-    return ColorUtils.lerp(color, new Color(255, 255, 255, color.a), amount);
+  public static lighten(color: Color4, amount: number): Color4 {
+    return ColorUtils.lerp(color, new Color4(255, 255, 255, color.a), amount);
   }
 
   /**
    * Mixes the color towards black in oklab, amount 0-1
    */
-  public static darken(color: Color, amount: number): Color {
-    return ColorUtils.lerp(color, new Color(0, 0, 0, color.a), amount);
+  public static darken(color: Color4, amount: number): Color4 {
+    return ColorUtils.lerp(color, new Color4(0, 0, 0, color.a), amount);
   }
 
   /**
    * Scales the chroma (colorfulness) by 1 + amount, e.g. 0.5 for 50% more saturated
    */
-  public static saturate(color: Color, amount: number): Color {
+  public static saturate(color: Color4, amount: number): Color4 {
     const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
     lch.c = Math.max(lch.c * (1 + amount), 0);
     return ColorUtils.clamp(
@@ -164,30 +164,30 @@ export class ColorUtils {
   /**
    * Scales the chroma (colorfulness) by 1 - amount, 1 gives a gray of the same lightness
    */
-  public static desaturate(color: Color, amount: number): Color {
+  public static desaturate(color: Color4, amount: number): Color4 {
     return ColorUtils.saturate(color, -amount);
   }
 
   /**
    * Perceived brightness 0-255, using Rec. 709 luma weights
    */
-  public static luminance(color: Color): number {
+  public static luminance(color: Color4): number {
     return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
   }
 
   /**
    * Converts the color to a gray of the same perceived brightness, keeping alpha
    */
-  public static grayscale(color: Color): Color {
+  public static grayscale(color: Color4): Color4 {
     const luminance = ColorUtils.luminance(color);
-    return new Color(luminance, luminance, luminance, color.a);
+    return new Color4(luminance, luminance, luminance, color.a);
   }
 
   /**
    * Returns a random opaque color
    */
-  public static random(): Color {
-    return new Color(
+  public static random(): Color4 {
+    return new Color4(
       Math.floor(Math.random() * 256),
       Math.floor(Math.random() * 256),
       Math.floor(Math.random() * 256),
@@ -195,30 +195,30 @@ export class ColorUtils {
     );
   }
 
-  public static withR(color: Color, x: number): Color {
-    return new Color(x, color.g, color.b, color.a);
+  public static withR(color: Color4, x: number): Color4 {
+    return new Color4(x, color.g, color.b, color.a);
   }
 
-  public static withG(color: Color, x: number): Color {
-    return new Color(color.r, x, color.b, color.a);
+  public static withG(color: Color4, x: number): Color4 {
+    return new Color4(color.r, x, color.b, color.a);
   }
 
-  public static withB(color: Color, x: number): Color {
-    return new Color(color.r, color.g, x, color.a);
+  public static withB(color: Color4, x: number): Color4 {
+    return new Color4(color.r, color.g, x, color.a);
   }
 
-  public static withA(color: Color, x: number): Color {
-    return new Color(color.r, color.g, color.b, x);
+  public static withA(color: Color4, x: number): Color4 {
+    return new Color4(color.r, color.g, color.b, x);
   }
 
-  public static fromRgba(rgba: number): Color {
-    return Color.fromRgba(rgba);
+  public static fromRgba(rgba: number): Color4 {
+    return Color4.fromRgba(rgba);
   }
 
   /**
    * Packs the color into a 0xRRGGBBAA integer (components rounded and clamped)
    */
-  public static toRgba(color: Color): number {
+  public static toRgba(color: Color4): number {
     const c = ColorUtils.round(color);
     return ((c.r << 24) | (c.g << 16) | (c.b << 8) | c.a) >>> 0;
   }
@@ -227,7 +227,7 @@ export class ColorUtils {
    * Creates a Color from a hex string: #rgb, #rgba, #rrggbb or #rrggbbaa
    * (leading # optional)
    */
-  public static fromHex(hex: string): Color {
+  public static fromHex(hex: string): Color4 {
     let digits = hex.startsWith('#') ? hex.slice(1) : hex;
     if (digits.length === 3 || digits.length === 4) {
       digits = [...digits].map((digit) => digit + digit).join('');
@@ -235,7 +235,7 @@ export class ColorUtils {
     if (!/^[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(digits)) {
       throw Error(`Invalid hex color: ${hex}`);
     }
-    return new Color(
+    return new Color4(
       parseInt(digits.slice(0, 2), 16),
       parseInt(digits.slice(2, 4), 16),
       parseInt(digits.slice(4, 6), 16),
@@ -246,14 +246,14 @@ export class ColorUtils {
   /**
    * Formats the color as a hex string, e.g. #ff8800 (alpha appended when not 255)
    */
-  public static toHex(color: Color): string {
+  public static toHex(color: Color4): string {
     const c = ColorUtils.round(color);
     const hex = (component: number) => component.toString(16).padStart(2, '0');
     return `#${hex(c.r)}${hex(c.g)}${hex(c.b)}${c.a === 255 ? '' : hex(c.a)}`;
   }
 
   // https://bottosson.github.io/posts/oklab/
-  public static LinearSrgbToOklab(c: Color): LABColor {
+  public static LinearSrgbToOklab(c: Color4): LABColor {
     const l = 0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b;
     const m = 0.2119034982 * c.r + 0.6806995451 * c.g + 0.1073969566 * c.b;
     const s = 0.0883024619 * c.r + 0.2817188376 * c.g + 0.6299787005 * c.b;
@@ -269,7 +269,7 @@ export class ColorUtils {
     };
   }
 
-  public static OklabToLinearSrgb(c: LABColor, a?: number): Color {
+  public static OklabToLinearSrgb(c: LABColor, a?: number): Color4 {
     const l_ = c.l + 0.3963377774 * c.a + 0.2158037573 * c.b;
     const m_ = c.l - 0.1055613458 * c.a - 0.0638541728 * c.b;
     const s_ = c.l - 0.0894841775 * c.a - 1.2914855480 * c.b;
@@ -278,7 +278,7 @@ export class ColorUtils {
     const m = m_ * m_ * m_;
     const s = s_ * s_ * s_;
 
-    return new Color(
+    return new Color4(
       4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
       -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
       -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
@@ -304,7 +304,7 @@ export class ColorUtils {
   }
 }
 
-export class Color {
+export class Color4 {
   public r: number;
   public g: number;
   public b: number;
@@ -334,8 +334,8 @@ export class Color {
   /**
    * Creates a Color from a packed 0xRRGGBBAA integer, e.g. 0x00FF00FF for opaque green
    */
-  public static fromRgba(rgba: number): Color {
-    return new Color(
+  public static fromRgba(rgba: number): Color4 {
+    return new Color4(
       (rgba >>> 24) & 0xff,
       (rgba >>> 16) & 0xff,
       (rgba >>> 8) & 0xff,
@@ -347,7 +347,7 @@ export class Color {
    * Creates a Color from a hex string: #rgb, #rgba, #rrggbb or #rrggbbaa
    * (leading # optional)
    */
-  public static fromHex(hex: string): Color {
+  public static fromHex(hex: string): Color4 {
     return ColorUtils.fromHex(hex);
   }
 
@@ -355,168 +355,168 @@ export class Color {
    * Samples a multi-stop gradient at a 0.0-1.0 fraction, interpolating in oklab
    */
   public static gradient(
-    colors: readonly Color[],
+    colors: readonly Color4[],
     fraction: number,
     clamp: boolean = true,
-  ): Color {
+  ): Color4 {
     return ColorUtils.gradient(colors, fraction, clamp);
   }
 
   /**
    * Returns a random opaque color
    */
-  public static random(): Color {
+  public static random(): Color4 {
     return ColorUtils.random();
   }
 
   // web colors
-  public static readonly Transparent: Readonly<Color> = Color.fromRgba(0xFFFFFF00);
-  public static readonly AliceBlue: Readonly<Color> = Color.fromRgba(0xF0F8FFFF);
-  public static readonly AntiqueWhite: Readonly<Color> = Color.fromRgba(0xFAEBD7FF);
-  public static readonly Aqua: Readonly<Color> = Color.fromRgba(0x00FFFFFF);
-  public static readonly Aquamarine: Readonly<Color> = Color.fromRgba(0x7FFFD4FF);
-  public static readonly Azure: Readonly<Color> = Color.fromRgba(0xF0FFFFFF);
-  public static readonly Beige: Readonly<Color> = Color.fromRgba(0xF5F5DCFF);
-  public static readonly Bisque: Readonly<Color> = Color.fromRgba(0xFFE4C4FF);
-  public static readonly Black: Readonly<Color> = Color.fromRgba(0x000000FF);
-  public static readonly BlanchedAlmond: Readonly<Color> = Color.fromRgba(0xFFEBCDFF);
-  public static readonly Blue: Readonly<Color> = Color.fromRgba(0x0000FFFF);
-  public static readonly BlueViolet: Readonly<Color> = Color.fromRgba(0x8A2BE2FF);
-  public static readonly Brown: Readonly<Color> = Color.fromRgba(0xA52A2AFF);
-  public static readonly BurlyWood: Readonly<Color> = Color.fromRgba(0xDEB887FF);
-  public static readonly CadetBlue: Readonly<Color> = Color.fromRgba(0x5F9EA0FF);
-  public static readonly Chartreuse: Readonly<Color> = Color.fromRgba(0x7FFF00FF);
-  public static readonly Chocolate: Readonly<Color> = Color.fromRgba(0xD2691EFF);
-  public static readonly Coral: Readonly<Color> = Color.fromRgba(0xFF7F50FF);
-  public static readonly CornflowerBlue: Readonly<Color> = Color.fromRgba(0x6495EDFF);
-  public static readonly Cornsilk: Readonly<Color> = Color.fromRgba(0xFFF8DCFF);
-  public static readonly Crimson: Readonly<Color> = Color.fromRgba(0xDC143CFF);
-  public static readonly Cyan: Readonly<Color> = Color.fromRgba(0x00FFFFFF);
-  public static readonly DarkBlue: Readonly<Color> = Color.fromRgba(0x00008BFF);
-  public static readonly DarkCyan: Readonly<Color> = Color.fromRgba(0x008B8BFF);
-  public static readonly DarkGoldenrod: Readonly<Color> = Color.fromRgba(0xB8860BFF);
-  public static readonly DarkGray: Readonly<Color> = Color.fromRgba(0xA9A9A9FF);
-  public static readonly DarkGreen: Readonly<Color> = Color.fromRgba(0x006400FF);
-  public static readonly DarkKhaki: Readonly<Color> = Color.fromRgba(0xBDB76BFF);
-  public static readonly DarkMagenta: Readonly<Color> = Color.fromRgba(0x8B008BFF);
-  public static readonly DarkOliveGreen: Readonly<Color> = Color.fromRgba(0x556B2FFF);
-  public static readonly DarkOrange: Readonly<Color> = Color.fromRgba(0xFF8C00FF);
-  public static readonly DarkOrchid: Readonly<Color> = Color.fromRgba(0x9932CCFF);
-  public static readonly DarkRed: Readonly<Color> = Color.fromRgba(0x8B0000FF);
-  public static readonly DarkSalmon: Readonly<Color> = Color.fromRgba(0xE9967AFF);
-  public static readonly DarkSeaGreen: Readonly<Color> = Color.fromRgba(0x8FBC8FFF);
-  public static readonly DarkSlateBlue: Readonly<Color> = Color.fromRgba(0x483D8BFF);
-  public static readonly DarkSlateGray: Readonly<Color> = Color.fromRgba(0x2F4F4FFF);
-  public static readonly DarkTurquoise: Readonly<Color> = Color.fromRgba(0x00CED1FF);
-  public static readonly DarkViolet: Readonly<Color> = Color.fromRgba(0x9400D3FF);
-  public static readonly DeepPink: Readonly<Color> = Color.fromRgba(0xFF1493FF);
-  public static readonly DeepSkyBlue: Readonly<Color> = Color.fromRgba(0x00BFFFFF);
-  public static readonly DimGray: Readonly<Color> = Color.fromRgba(0x696969FF);
-  public static readonly DodgerBlue: Readonly<Color> = Color.fromRgba(0x1E90FFFF);
-  public static readonly Firebrick: Readonly<Color> = Color.fromRgba(0xB22222FF);
-  public static readonly FloralWhite: Readonly<Color> = Color.fromRgba(0xFFFAF0FF);
-  public static readonly ForestGreen: Readonly<Color> = Color.fromRgba(0x228B22FF);
-  public static readonly Fuchsia: Readonly<Color> = Color.fromRgba(0xFF00FFFF);
-  public static readonly Gainsboro: Readonly<Color> = Color.fromRgba(0xDCDCDCFF);
-  public static readonly GhostWhite: Readonly<Color> = Color.fromRgba(0xF8F8FFFF);
-  public static readonly Gold: Readonly<Color> = Color.fromRgba(0xFFD700FF);
-  public static readonly Goldenrod: Readonly<Color> = Color.fromRgba(0xDAA520FF);
-  public static readonly Gray: Readonly<Color> = Color.fromRgba(0x808080FF);
-  public static readonly Green: Readonly<Color> = Color.fromRgba(0x00FF00FF);
-  public static readonly GreenYellow: Readonly<Color> = Color.fromRgba(0xADFF2FFF);
-  public static readonly Honeydew: Readonly<Color> = Color.fromRgba(0xF0FFF0FF);
-  public static readonly HotPink: Readonly<Color> = Color.fromRgba(0xFF69B4FF);
-  public static readonly IndianRed: Readonly<Color> = Color.fromRgba(0xCD5C5CFF);
-  public static readonly Indigo: Readonly<Color> = Color.fromRgba(0x4B0082FF);
-  public static readonly Ivory: Readonly<Color> = Color.fromRgba(0xFFFFF0FF);
-  public static readonly Khaki: Readonly<Color> = Color.fromRgba(0xF0E68CFF);
-  public static readonly Lavender: Readonly<Color> = Color.fromRgba(0xE6E6FAFF);
-  public static readonly LavenderBlush: Readonly<Color> = Color.fromRgba(0xFFF0F5FF);
-  public static readonly LawnGreen: Readonly<Color> = Color.fromRgba(0x7CFC00FF);
-  public static readonly LemonChiffon: Readonly<Color> = Color.fromRgba(0xFFFACDFF);
-  public static readonly LightBlue: Readonly<Color> = Color.fromRgba(0xADD8E6FF);
-  public static readonly LightCoral: Readonly<Color> = Color.fromRgba(0xF08080FF);
-  public static readonly LightCyan: Readonly<Color> = Color.fromRgba(0xE0FFFFFF);
-  public static readonly LightGoldenrodYellow: Readonly<Color> = Color.fromRgba(0xFAFAD2FF);
-  public static readonly LightGray: Readonly<Color> = Color.fromRgba(0xD3D3D3FF);
-  public static readonly LightGreen: Readonly<Color> = Color.fromRgba(0x90EE90FF);
-  public static readonly LightPink: Readonly<Color> = Color.fromRgba(0xFFB6C1FF);
-  public static readonly LightSalmon: Readonly<Color> = Color.fromRgba(0xFFA07AFF);
-  public static readonly LightSeaGreen: Readonly<Color> = Color.fromRgba(0x20B2AAFF);
-  public static readonly LightSkyBlue: Readonly<Color> = Color.fromRgba(0x87CEFAFF);
-  public static readonly LightSlateGray: Readonly<Color> = Color.fromRgba(0x778899FF);
-  public static readonly LightSteelBlue: Readonly<Color> = Color.fromRgba(0xB0C4DEFF);
-  public static readonly LightYellow: Readonly<Color> = Color.fromRgba(0xFFFFE0FF);
-  public static readonly Lime: Readonly<Color> = Color.fromRgba(0x008000FF);
-  public static readonly LimeGreen: Readonly<Color> = Color.fromRgba(0x32CD32FF);
-  public static readonly Linen: Readonly<Color> = Color.fromRgba(0xFAF0E6FF);
-  public static readonly Magenta: Readonly<Color> = Color.fromRgba(0xFF00FFFF);
-  public static readonly Maroon: Readonly<Color> = Color.fromRgba(0x800000FF);
-  public static readonly MediumAquamarine: Readonly<Color> = Color.fromRgba(0x66CDAAFF);
-  public static readonly MediumBlue: Readonly<Color> = Color.fromRgba(0x0000CDFF);
-  public static readonly MediumOrchid: Readonly<Color> = Color.fromRgba(0xBA55D3FF);
-  public static readonly MediumPurple: Readonly<Color> = Color.fromRgba(0x9370DBFF);
-  public static readonly MediumSeaGreen: Readonly<Color> = Color.fromRgba(0x3CB371FF);
-  public static readonly MediumSlateBlue: Readonly<Color> = Color.fromRgba(0x7B68EEFF);
-  public static readonly MediumSpringGreen: Readonly<Color> = Color.fromRgba(0x00FA9AFF);
-  public static readonly MediumTurquoise: Readonly<Color> = Color.fromRgba(0x48D1CCFF);
-  public static readonly MediumVioletRed: Readonly<Color> = Color.fromRgba(0xC71585FF);
-  public static readonly MidnightBlue: Readonly<Color> = Color.fromRgba(0x191970FF);
-  public static readonly MintCream: Readonly<Color> = Color.fromRgba(0xF5FFFAFF);
-  public static readonly MistyRose: Readonly<Color> = Color.fromRgba(0xFFE4E1FF);
-  public static readonly Moccasin: Readonly<Color> = Color.fromRgba(0xFFE4B5FF);
-  public static readonly NavajoWhite: Readonly<Color> = Color.fromRgba(0xFFDEADFF);
-  public static readonly Navy: Readonly<Color> = Color.fromRgba(0x000080FF);
-  public static readonly OldLace: Readonly<Color> = Color.fromRgba(0xFDF5E6FF);
-  public static readonly Olive: Readonly<Color> = Color.fromRgba(0x808000FF);
-  public static readonly OliveDrab: Readonly<Color> = Color.fromRgba(0x6B8E23FF);
-  public static readonly Orange: Readonly<Color> = Color.fromRgba(0xFFA500FF);
-  public static readonly OrangeRed: Readonly<Color> = Color.fromRgba(0xFF4500FF);
-  public static readonly Orchid: Readonly<Color> = Color.fromRgba(0xDA70D6FF);
-  public static readonly PaleGoldenrod: Readonly<Color> = Color.fromRgba(0xEEE8AAFF);
-  public static readonly PaleGreen: Readonly<Color> = Color.fromRgba(0x98FB98FF);
-  public static readonly PaleTurquoise: Readonly<Color> = Color.fromRgba(0xAFEEEEFF);
-  public static readonly PaleVioletRed: Readonly<Color> = Color.fromRgba(0xDB7093FF);
-  public static readonly PapayaWhip: Readonly<Color> = Color.fromRgba(0xFFEFD5FF);
-  public static readonly PeachPuff: Readonly<Color> = Color.fromRgba(0xFFDAB9FF);
-  public static readonly Peru: Readonly<Color> = Color.fromRgba(0xCD853FFF);
-  public static readonly Pink: Readonly<Color> = Color.fromRgba(0xFFC0CBFF);
-  public static readonly Plum: Readonly<Color> = Color.fromRgba(0xDDA0DDFF);
-  public static readonly PowderBlue: Readonly<Color> = Color.fromRgba(0xB0E0E6FF);
-  public static readonly Purple: Readonly<Color> = Color.fromRgba(0x800080FF);
-  public static readonly RebeccaPurple: Readonly<Color> = Color.fromRgba(0x663399FF);
-  public static readonly Red: Readonly<Color> = Color.fromRgba(0xFF0000FF);
-  public static readonly RosyBrown: Readonly<Color> = Color.fromRgba(0xBC8F8FFF);
-  public static readonly RoyalBlue: Readonly<Color> = Color.fromRgba(0x4169E1FF);
-  public static readonly SaddleBrown: Readonly<Color> = Color.fromRgba(0x8B4513FF);
-  public static readonly Salmon: Readonly<Color> = Color.fromRgba(0xFA8072FF);
-  public static readonly SandyBrown: Readonly<Color> = Color.fromRgba(0xF4A460FF);
-  public static readonly SeaGreen: Readonly<Color> = Color.fromRgba(0x2E8B57FF);
-  public static readonly SeaShell: Readonly<Color> = Color.fromRgba(0xFFF5EEFF);
-  public static readonly Sienna: Readonly<Color> = Color.fromRgba(0xA0522DFF);
-  public static readonly Silver: Readonly<Color> = Color.fromRgba(0xC0C0C0FF);
-  public static readonly SkyBlue: Readonly<Color> = Color.fromRgba(0x87CEEBFF);
-  public static readonly SlateBlue: Readonly<Color> = Color.fromRgba(0x6A5ACDFF);
-  public static readonly SlateGray: Readonly<Color> = Color.fromRgba(0x708090FF);
-  public static readonly Snow: Readonly<Color> = Color.fromRgba(0xFFFAFAFF);
-  public static readonly SpringGreen: Readonly<Color> = Color.fromRgba(0x00FF7FFF);
-  public static readonly SteelBlue: Readonly<Color> = Color.fromRgba(0x4682B4FF);
-  public static readonly Tan: Readonly<Color> = Color.fromRgba(0xD2B48CFF);
-  public static readonly Teal: Readonly<Color> = Color.fromRgba(0x008080FF);
-  public static readonly Thistle: Readonly<Color> = Color.fromRgba(0xD8BFD8FF);
-  public static readonly Tomato: Readonly<Color> = Color.fromRgba(0xFF6347FF);
-  public static readonly Turquoise: Readonly<Color> = Color.fromRgba(0x40E0D0FF);
-  public static readonly Violet: Readonly<Color> = Color.fromRgba(0xEE82EEFF);
-  public static readonly Wheat: Readonly<Color> = Color.fromRgba(0xF5DEB3FF);
-  public static readonly White: Readonly<Color> = Color.fromRgba(0xFFFFFFFF);
-  public static readonly WhiteSmoke: Readonly<Color> = Color.fromRgba(0xF5F5F5FF);
-  public static readonly Yellow: Readonly<Color> = Color.fromRgba(0xFFFF00FF);
-  public static readonly YellowGreen: Readonly<Color> = Color.fromRgba(0x9ACD32FF);
+  public static readonly Transparent: Readonly<Color4> = Color4.fromRgba(0xFFFFFF00);
+  public static readonly AliceBlue: Readonly<Color4> = Color4.fromRgba(0xF0F8FFFF);
+  public static readonly AntiqueWhite: Readonly<Color4> = Color4.fromRgba(0xFAEBD7FF);
+  public static readonly Aqua: Readonly<Color4> = Color4.fromRgba(0x00FFFFFF);
+  public static readonly Aquamarine: Readonly<Color4> = Color4.fromRgba(0x7FFFD4FF);
+  public static readonly Azure: Readonly<Color4> = Color4.fromRgba(0xF0FFFFFF);
+  public static readonly Beige: Readonly<Color4> = Color4.fromRgba(0xF5F5DCFF);
+  public static readonly Bisque: Readonly<Color4> = Color4.fromRgba(0xFFE4C4FF);
+  public static readonly Black: Readonly<Color4> = Color4.fromRgba(0x000000FF);
+  public static readonly BlanchedAlmond: Readonly<Color4> = Color4.fromRgba(0xFFEBCDFF);
+  public static readonly Blue: Readonly<Color4> = Color4.fromRgba(0x0000FFFF);
+  public static readonly BlueViolet: Readonly<Color4> = Color4.fromRgba(0x8A2BE2FF);
+  public static readonly Brown: Readonly<Color4> = Color4.fromRgba(0xA52A2AFF);
+  public static readonly BurlyWood: Readonly<Color4> = Color4.fromRgba(0xDEB887FF);
+  public static readonly CadetBlue: Readonly<Color4> = Color4.fromRgba(0x5F9EA0FF);
+  public static readonly Chartreuse: Readonly<Color4> = Color4.fromRgba(0x7FFF00FF);
+  public static readonly Chocolate: Readonly<Color4> = Color4.fromRgba(0xD2691EFF);
+  public static readonly Coral: Readonly<Color4> = Color4.fromRgba(0xFF7F50FF);
+  public static readonly CornflowerBlue: Readonly<Color4> = Color4.fromRgba(0x6495EDFF);
+  public static readonly Cornsilk: Readonly<Color4> = Color4.fromRgba(0xFFF8DCFF);
+  public static readonly Crimson: Readonly<Color4> = Color4.fromRgba(0xDC143CFF);
+  public static readonly Cyan: Readonly<Color4> = Color4.fromRgba(0x00FFFFFF);
+  public static readonly DarkBlue: Readonly<Color4> = Color4.fromRgba(0x00008BFF);
+  public static readonly DarkCyan: Readonly<Color4> = Color4.fromRgba(0x008B8BFF);
+  public static readonly DarkGoldenrod: Readonly<Color4> = Color4.fromRgba(0xB8860BFF);
+  public static readonly DarkGray: Readonly<Color4> = Color4.fromRgba(0xA9A9A9FF);
+  public static readonly DarkGreen: Readonly<Color4> = Color4.fromRgba(0x006400FF);
+  public static readonly DarkKhaki: Readonly<Color4> = Color4.fromRgba(0xBDB76BFF);
+  public static readonly DarkMagenta: Readonly<Color4> = Color4.fromRgba(0x8B008BFF);
+  public static readonly DarkOliveGreen: Readonly<Color4> = Color4.fromRgba(0x556B2FFF);
+  public static readonly DarkOrange: Readonly<Color4> = Color4.fromRgba(0xFF8C00FF);
+  public static readonly DarkOrchid: Readonly<Color4> = Color4.fromRgba(0x9932CCFF);
+  public static readonly DarkRed: Readonly<Color4> = Color4.fromRgba(0x8B0000FF);
+  public static readonly DarkSalmon: Readonly<Color4> = Color4.fromRgba(0xE9967AFF);
+  public static readonly DarkSeaGreen: Readonly<Color4> = Color4.fromRgba(0x8FBC8FFF);
+  public static readonly DarkSlateBlue: Readonly<Color4> = Color4.fromRgba(0x483D8BFF);
+  public static readonly DarkSlateGray: Readonly<Color4> = Color4.fromRgba(0x2F4F4FFF);
+  public static readonly DarkTurquoise: Readonly<Color4> = Color4.fromRgba(0x00CED1FF);
+  public static readonly DarkViolet: Readonly<Color4> = Color4.fromRgba(0x9400D3FF);
+  public static readonly DeepPink: Readonly<Color4> = Color4.fromRgba(0xFF1493FF);
+  public static readonly DeepSkyBlue: Readonly<Color4> = Color4.fromRgba(0x00BFFFFF);
+  public static readonly DimGray: Readonly<Color4> = Color4.fromRgba(0x696969FF);
+  public static readonly DodgerBlue: Readonly<Color4> = Color4.fromRgba(0x1E90FFFF);
+  public static readonly Firebrick: Readonly<Color4> = Color4.fromRgba(0xB22222FF);
+  public static readonly FloralWhite: Readonly<Color4> = Color4.fromRgba(0xFFFAF0FF);
+  public static readonly ForestGreen: Readonly<Color4> = Color4.fromRgba(0x228B22FF);
+  public static readonly Fuchsia: Readonly<Color4> = Color4.fromRgba(0xFF00FFFF);
+  public static readonly Gainsboro: Readonly<Color4> = Color4.fromRgba(0xDCDCDCFF);
+  public static readonly GhostWhite: Readonly<Color4> = Color4.fromRgba(0xF8F8FFFF);
+  public static readonly Gold: Readonly<Color4> = Color4.fromRgba(0xFFD700FF);
+  public static readonly Goldenrod: Readonly<Color4> = Color4.fromRgba(0xDAA520FF);
+  public static readonly Gray: Readonly<Color4> = Color4.fromRgba(0x808080FF);
+  public static readonly Green: Readonly<Color4> = Color4.fromRgba(0x00FF00FF);
+  public static readonly GreenYellow: Readonly<Color4> = Color4.fromRgba(0xADFF2FFF);
+  public static readonly Honeydew: Readonly<Color4> = Color4.fromRgba(0xF0FFF0FF);
+  public static readonly HotPink: Readonly<Color4> = Color4.fromRgba(0xFF69B4FF);
+  public static readonly IndianRed: Readonly<Color4> = Color4.fromRgba(0xCD5C5CFF);
+  public static readonly Indigo: Readonly<Color4> = Color4.fromRgba(0x4B0082FF);
+  public static readonly Ivory: Readonly<Color4> = Color4.fromRgba(0xFFFFF0FF);
+  public static readonly Khaki: Readonly<Color4> = Color4.fromRgba(0xF0E68CFF);
+  public static readonly Lavender: Readonly<Color4> = Color4.fromRgba(0xE6E6FAFF);
+  public static readonly LavenderBlush: Readonly<Color4> = Color4.fromRgba(0xFFF0F5FF);
+  public static readonly LawnGreen: Readonly<Color4> = Color4.fromRgba(0x7CFC00FF);
+  public static readonly LemonChiffon: Readonly<Color4> = Color4.fromRgba(0xFFFACDFF);
+  public static readonly LightBlue: Readonly<Color4> = Color4.fromRgba(0xADD8E6FF);
+  public static readonly LightCoral: Readonly<Color4> = Color4.fromRgba(0xF08080FF);
+  public static readonly LightCyan: Readonly<Color4> = Color4.fromRgba(0xE0FFFFFF);
+  public static readonly LightGoldenrodYellow: Readonly<Color4> = Color4.fromRgba(0xFAFAD2FF);
+  public static readonly LightGray: Readonly<Color4> = Color4.fromRgba(0xD3D3D3FF);
+  public static readonly LightGreen: Readonly<Color4> = Color4.fromRgba(0x90EE90FF);
+  public static readonly LightPink: Readonly<Color4> = Color4.fromRgba(0xFFB6C1FF);
+  public static readonly LightSalmon: Readonly<Color4> = Color4.fromRgba(0xFFA07AFF);
+  public static readonly LightSeaGreen: Readonly<Color4> = Color4.fromRgba(0x20B2AAFF);
+  public static readonly LightSkyBlue: Readonly<Color4> = Color4.fromRgba(0x87CEFAFF);
+  public static readonly LightSlateGray: Readonly<Color4> = Color4.fromRgba(0x778899FF);
+  public static readonly LightSteelBlue: Readonly<Color4> = Color4.fromRgba(0xB0C4DEFF);
+  public static readonly LightYellow: Readonly<Color4> = Color4.fromRgba(0xFFFFE0FF);
+  public static readonly Lime: Readonly<Color4> = Color4.fromRgba(0x008000FF);
+  public static readonly LimeGreen: Readonly<Color4> = Color4.fromRgba(0x32CD32FF);
+  public static readonly Linen: Readonly<Color4> = Color4.fromRgba(0xFAF0E6FF);
+  public static readonly Magenta: Readonly<Color4> = Color4.fromRgba(0xFF00FFFF);
+  public static readonly Maroon: Readonly<Color4> = Color4.fromRgba(0x800000FF);
+  public static readonly MediumAquamarine: Readonly<Color4> = Color4.fromRgba(0x66CDAAFF);
+  public static readonly MediumBlue: Readonly<Color4> = Color4.fromRgba(0x0000CDFF);
+  public static readonly MediumOrchid: Readonly<Color4> = Color4.fromRgba(0xBA55D3FF);
+  public static readonly MediumPurple: Readonly<Color4> = Color4.fromRgba(0x9370DBFF);
+  public static readonly MediumSeaGreen: Readonly<Color4> = Color4.fromRgba(0x3CB371FF);
+  public static readonly MediumSlateBlue: Readonly<Color4> = Color4.fromRgba(0x7B68EEFF);
+  public static readonly MediumSpringGreen: Readonly<Color4> = Color4.fromRgba(0x00FA9AFF);
+  public static readonly MediumTurquoise: Readonly<Color4> = Color4.fromRgba(0x48D1CCFF);
+  public static readonly MediumVioletRed: Readonly<Color4> = Color4.fromRgba(0xC71585FF);
+  public static readonly MidnightBlue: Readonly<Color4> = Color4.fromRgba(0x191970FF);
+  public static readonly MintCream: Readonly<Color4> = Color4.fromRgba(0xF5FFFAFF);
+  public static readonly MistyRose: Readonly<Color4> = Color4.fromRgba(0xFFE4E1FF);
+  public static readonly Moccasin: Readonly<Color4> = Color4.fromRgba(0xFFE4B5FF);
+  public static readonly NavajoWhite: Readonly<Color4> = Color4.fromRgba(0xFFDEADFF);
+  public static readonly Navy: Readonly<Color4> = Color4.fromRgba(0x000080FF);
+  public static readonly OldLace: Readonly<Color4> = Color4.fromRgba(0xFDF5E6FF);
+  public static readonly Olive: Readonly<Color4> = Color4.fromRgba(0x808000FF);
+  public static readonly OliveDrab: Readonly<Color4> = Color4.fromRgba(0x6B8E23FF);
+  public static readonly Orange: Readonly<Color4> = Color4.fromRgba(0xFFA500FF);
+  public static readonly OrangeRed: Readonly<Color4> = Color4.fromRgba(0xFF4500FF);
+  public static readonly Orchid: Readonly<Color4> = Color4.fromRgba(0xDA70D6FF);
+  public static readonly PaleGoldenrod: Readonly<Color4> = Color4.fromRgba(0xEEE8AAFF);
+  public static readonly PaleGreen: Readonly<Color4> = Color4.fromRgba(0x98FB98FF);
+  public static readonly PaleTurquoise: Readonly<Color4> = Color4.fromRgba(0xAFEEEEFF);
+  public static readonly PaleVioletRed: Readonly<Color4> = Color4.fromRgba(0xDB7093FF);
+  public static readonly PapayaWhip: Readonly<Color4> = Color4.fromRgba(0xFFEFD5FF);
+  public static readonly PeachPuff: Readonly<Color4> = Color4.fromRgba(0xFFDAB9FF);
+  public static readonly Peru: Readonly<Color4> = Color4.fromRgba(0xCD853FFF);
+  public static readonly Pink: Readonly<Color4> = Color4.fromRgba(0xFFC0CBFF);
+  public static readonly Plum: Readonly<Color4> = Color4.fromRgba(0xDDA0DDFF);
+  public static readonly PowderBlue: Readonly<Color4> = Color4.fromRgba(0xB0E0E6FF);
+  public static readonly Purple: Readonly<Color4> = Color4.fromRgba(0x800080FF);
+  public static readonly RebeccaPurple: Readonly<Color4> = Color4.fromRgba(0x663399FF);
+  public static readonly Red: Readonly<Color4> = Color4.fromRgba(0xFF0000FF);
+  public static readonly RosyBrown: Readonly<Color4> = Color4.fromRgba(0xBC8F8FFF);
+  public static readonly RoyalBlue: Readonly<Color4> = Color4.fromRgba(0x4169E1FF);
+  public static readonly SaddleBrown: Readonly<Color4> = Color4.fromRgba(0x8B4513FF);
+  public static readonly Salmon: Readonly<Color4> = Color4.fromRgba(0xFA8072FF);
+  public static readonly SandyBrown: Readonly<Color4> = Color4.fromRgba(0xF4A460FF);
+  public static readonly SeaGreen: Readonly<Color4> = Color4.fromRgba(0x2E8B57FF);
+  public static readonly SeaShell: Readonly<Color4> = Color4.fromRgba(0xFFF5EEFF);
+  public static readonly Sienna: Readonly<Color4> = Color4.fromRgba(0xA0522DFF);
+  public static readonly Silver: Readonly<Color4> = Color4.fromRgba(0xC0C0C0FF);
+  public static readonly SkyBlue: Readonly<Color4> = Color4.fromRgba(0x87CEEBFF);
+  public static readonly SlateBlue: Readonly<Color4> = Color4.fromRgba(0x6A5ACDFF);
+  public static readonly SlateGray: Readonly<Color4> = Color4.fromRgba(0x708090FF);
+  public static readonly Snow: Readonly<Color4> = Color4.fromRgba(0xFFFAFAFF);
+  public static readonly SpringGreen: Readonly<Color4> = Color4.fromRgba(0x00FF7FFF);
+  public static readonly SteelBlue: Readonly<Color4> = Color4.fromRgba(0x4682B4FF);
+  public static readonly Tan: Readonly<Color4> = Color4.fromRgba(0xD2B48CFF);
+  public static readonly Teal: Readonly<Color4> = Color4.fromRgba(0x008080FF);
+  public static readonly Thistle: Readonly<Color4> = Color4.fromRgba(0xD8BFD8FF);
+  public static readonly Tomato: Readonly<Color4> = Color4.fromRgba(0xFF6347FF);
+  public static readonly Turquoise: Readonly<Color4> = Color4.fromRgba(0x40E0D0FF);
+  public static readonly Violet: Readonly<Color4> = Color4.fromRgba(0xEE82EEFF);
+  public static readonly Wheat: Readonly<Color4> = Color4.fromRgba(0xF5DEB3FF);
+  public static readonly White: Readonly<Color4> = Color4.fromRgba(0xFFFFFFFF);
+  public static readonly WhiteSmoke: Readonly<Color4> = Color4.fromRgba(0xF5F5F5FF);
+  public static readonly Yellow: Readonly<Color4> = Color4.fromRgba(0xFFFF00FF);
+  public static readonly YellowGreen: Readonly<Color4> = Color4.fromRgba(0x9ACD32FF);
 
   /**
    * Returns the complement color (255 - component), leaving alpha untouched
    */
-  public get inverse(): Color {
+  public get inverse(): Color4 {
     return ColorUtils.inverse(this);
   }
 
@@ -524,15 +524,15 @@ export class Color {
     return `Color: [r: ${this.r}, g: ${this.g}, b: ${this.b}, a:${this.a}]`;
   }
 
-  public equals(color: Color, epsilon: number = 0): boolean {
+  public equals(color: Color4, epsilon: number = 0): boolean {
     return ColorUtils.equals(this, color, epsilon);
   }
 
-  public add(color: Color): Color {
+  public add(color: Color4): Color4 {
     return ColorUtils.add(this, color);
   }
 
-  public subtract(color: Color): Color {
+  public subtract(color: Color4): Color4 {
     return ColorUtils.subtract(this, color);
   }
 
@@ -540,13 +540,13 @@ export class Color {
    * Divides all components uniformly by a number (inverse of scale) or
    * component-wise by a Color, throws on division by zero
    */
-  public divide(color: Color | number): Color {
+  public divide(color: Color4 | number): Color4 {
     return ColorUtils.divide(this, color);
   }
 
-  public scale(color: Color): Color;
-  public scale(scale: number): Color;
-  public scale(scaleOrColor: Color | number): Color {
+  public scale(color: Color4): Color4;
+  public scale(scale: number): Color4;
+  public scale(scaleOrColor: Color4 | number): Color4 {
     return typeof scaleOrColor === 'number'
       ? ColorUtils.scale(this, scaleOrColor)
       : ColorUtils.multiply(this, scaleOrColor);
@@ -555,9 +555,9 @@ export class Color {
   /**
    * Alias for Color.scale
    */
-  public multiply(color: Color): Color;
-  public multiply(scale: number): Color;
-  public multiply(scaleOrColor: Color | number): Color {
+  public multiply(color: Color4): Color4;
+  public multiply(scale: number): Color4;
+  public multiply(scaleOrColor: Color4 | number): Color4 {
     return typeof scaleOrColor === 'number'
       ? ColorUtils.scale(this, scaleOrColor)
       : ColorUtils.multiply(this, scaleOrColor);
@@ -568,14 +568,14 @@ export class Color {
    * Uses the perceptual colorspace OKLAB in order to give smoother color gradients.
    * Clamp limits the fraction to [0,1]
    */
-  public lerpTo(color: Color, fraction: number, clamp: boolean = true): Color {
+  public lerpTo(color: Color4, fraction: number, clamp: boolean = true): Color4 {
     return ColorUtils.lerp(this, color, fraction, clamp);
   }
 
   /**
-   * Alias for {@link Color.lerpTo}
+   * Alias for {@link Color4.lerpTo}
    */
-  public mix(color: Color, fraction: number, clamp: boolean = true): Color {
+  public mix(color: Color4, fraction: number, clamp: boolean = true): Color4 {
     return this.lerpTo(color, fraction, clamp);
   }
 
@@ -596,35 +596,35 @@ export class Color {
   /**
    * Rotates the hue by the given angle in degrees, preserving lightness and alpha
    */
-  public hueShift(degrees: number): Color {
+  public hueShift(degrees: number): Color4 {
     return ColorUtils.hueShift(this, degrees);
   }
 
   /**
    * Mixes the color towards white, amount 0-1
    */
-  public lighten(amount: number): Color {
+  public lighten(amount: number): Color4 {
     return ColorUtils.lighten(this, amount);
   }
 
   /**
    * Mixes the color towards black, amount 0-1
    */
-  public darken(amount: number): Color {
+  public darken(amount: number): Color4 {
     return ColorUtils.darken(this, amount);
   }
 
   /**
    * Scales the chroma (colorfulness) by 1 + amount, e.g. 0.5 for 50% more saturated
    */
-  public saturate(amount: number): Color {
+  public saturate(amount: number): Color4 {
     return ColorUtils.saturate(this, amount);
   }
 
   /**
    * Scales the chroma (colorfulness) by 1 - amount, 1 gives a gray of the same lightness
    */
-  public desaturate(amount: number): Color {
+  public desaturate(amount: number): Color4 {
     return ColorUtils.desaturate(this, amount);
   }
 
@@ -638,42 +638,42 @@ export class Color {
   /**
    * The color converted to a gray of the same perceived brightness, keeping alpha
    */
-  public get grayscale(): Color {
+  public get grayscale(): Color4 {
     return ColorUtils.grayscale(this);
   }
 
   /**
    * Each component rounded to the nearest integer and clamped to [0, 255]
    */
-  public get rounded(): Color {
+  public get rounded(): Color4 {
     return ColorUtils.round(this);
   }
 
   /**
    * Returns the same color but with a supplied R component
    */
-  public withR(r: number): Color {
+  public withR(r: number): Color4 {
     return ColorUtils.withR(this, r);
   }
 
   /**
    * Returns the same color but with a supplied G component
    */
-  public withG(g: number): Color {
+  public withG(g: number): Color4 {
     return ColorUtils.withG(this, g);
   }
 
   /**
    * Returns the same color but with a supplied B component
    */
-  public withB(b: number): Color {
+  public withB(b: number): Color4 {
     return ColorUtils.withB(this, b);
   }
 
   /**
    * Returns the same color but with a supplied A component
    */
-  public withA(a: number): Color {
+  public withA(a: number): Color4 {
     return ColorUtils.withA(this, a);
   }
 }
