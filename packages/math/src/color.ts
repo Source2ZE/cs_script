@@ -1,10 +1,17 @@
+import { DEG_TO_RAD, RAD_TO_DEG } from './constants';
 import { MathUtils } from './math';
 
 type LABColor = { l: number; a: number; b: number };
+type LCHColor = { l: number; c: number; h: number };
 
 export class ColorUtils {
-  public static equals(a: Color, b: Color): boolean {
-    return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
+  public static equals(a: Color, b: Color, epsilon: number = 0): boolean {
+    return (
+      Math.abs(a.r - b.r) <= epsilon
+      && Math.abs(a.g - b.g) <= epsilon
+      && Math.abs(a.b - b.b) <= epsilon
+      && Math.abs(a.a - b.a) <= epsilon
+    );
   }
 
   public static add(a: Color, b: Color): Color {
@@ -48,6 +55,32 @@ export class ColorUtils {
     return new Color(255 - color.r, 255 - color.g, 255 - color.b, color.a);
   }
 
+  /**
+   * Clamps each component to [0, 255]
+   */
+  public static clamp(color: Color): Color {
+    return new Color(
+      MathUtils.clamp(color.r, 0, 255),
+      MathUtils.clamp(color.g, 0, 255),
+      MathUtils.clamp(color.b, 0, 255),
+      MathUtils.clamp(color.a, 0, 255),
+    );
+  }
+
+  /**
+   * Rounds each component to the nearest integer and clamps it to [0, 255]
+   */
+  public static round(color: Color): Color {
+    return ColorUtils.clamp(
+      new Color(
+        Math.round(color.r),
+        Math.round(color.g),
+        Math.round(color.b),
+        Math.round(color.a),
+      ),
+    );
+  }
+
   // uses oklab to get better gradients when interpolating
   public static lerp(
     a: Color,
@@ -70,12 +103,96 @@ export class ColorUtils {
     };
 
     // interpolating in oklab can land slightly outside the srgb gamut
-    const result = ColorUtils.OklabToLinearSrgb(resultlab, a.a + (b.a - a.a) * t);
-    result.r = MathUtils.clamp(result.r, 0, 255);
-    result.g = MathUtils.clamp(result.g, 0, 255);
-    result.b = MathUtils.clamp(result.b, 0, 255);
-    result.a = MathUtils.clamp(result.a, 0, 255);
-    return result;
+    return ColorUtils.clamp(
+      ColorUtils.OklabToLinearSrgb(resultlab, a.a + (b.a - a.a) * t),
+    );
+  }
+
+  /**
+   * Samples a multi-stop gradient at a 0.0-1.0 fraction, interpolating in oklab
+   */
+  public static gradient(
+    colors: readonly Color[],
+    fraction: number,
+    clamp: boolean = true,
+  ): Color {
+    if (colors.length === 0) throw Error('Gradient requires at least one color');
+    if (colors.length === 1) return new Color(colors[0]);
+
+    const t = clamp ? MathUtils.clamp(fraction, 0, 1) : fraction;
+    const scaled = t * (colors.length - 1);
+    const index = MathUtils.clamp(Math.floor(scaled), 0, colors.length - 2);
+    return ColorUtils.lerp(colors[index], colors[index + 1], scaled - index, clamp);
+  }
+
+  /**
+   * Rotates the hue by the given angle in degrees, preserving lightness and alpha
+   */
+  public static hueShift(color: Color, degrees: number): Color {
+    const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
+    lch.h += degrees;
+    return ColorUtils.clamp(
+      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    );
+  }
+
+  /**
+   * Mixes the color towards white in oklab, amount 0-1
+   */
+  public static lighten(color: Color, amount: number): Color {
+    return ColorUtils.lerp(color, new Color(255, 255, 255, color.a), amount);
+  }
+
+  /**
+   * Mixes the color towards black in oklab, amount 0-1
+   */
+  public static darken(color: Color, amount: number): Color {
+    return ColorUtils.lerp(color, new Color(0, 0, 0, color.a), amount);
+  }
+
+  /**
+   * Scales the chroma (colorfulness) by 1 + amount, e.g. 0.5 for 50% more saturated
+   */
+  public static saturate(color: Color, amount: number): Color {
+    const lch = ColorUtils.OklabToOklch(ColorUtils.LinearSrgbToOklab(color));
+    lch.c = Math.max(lch.c * (1 + amount), 0);
+    return ColorUtils.clamp(
+      ColorUtils.OklabToLinearSrgb(ColorUtils.OklchToOklab(lch), color.a),
+    );
+  }
+
+  /**
+   * Scales the chroma (colorfulness) by 1 - amount, 1 gives a gray of the same lightness
+   */
+  public static desaturate(color: Color, amount: number): Color {
+    return ColorUtils.saturate(color, -amount);
+  }
+
+  /**
+   * Perceived brightness 0-255, using Rec. 709 luma weights
+   */
+  public static luminance(color: Color): number {
+    return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+  }
+
+  /**
+   * Converts the color to a gray of the same perceived brightness, keeping alpha
+   */
+  public static grayscale(color: Color): Color {
+    const luminance = ColorUtils.luminance(color);
+    return new Color(luminance, luminance, luminance, color.a);
+  }
+
+  /**
+   * Returns a random opaque color
+   */
+  public static random(): Color {
+    return new Color(
+      Math.floor(Math.random() * 256),
+      Math.floor(Math.random() * 256),
+      Math.floor(Math.random() * 256),
+      255,
+    );
   }
 
   public static withR(color: Color, x: number): Color {
@@ -101,6 +218,43 @@ export class ColorUtils {
       (rgba >>> 8) & 0xff,
       rgba & 0xff,
     );
+  }
+
+  /**
+   * Packs the color into a 0xRRGGBBAA integer (components rounded and clamped)
+   */
+  public static toRgba(color: Color): number {
+    const c = ColorUtils.round(color);
+    return ((c.r << 24) | (c.g << 16) | (c.b << 8) | c.a) >>> 0;
+  }
+
+  /**
+   * Creates a Color from a hex string: #rgb, #rgba, #rrggbb or #rrggbbaa
+   * (leading # optional)
+   */
+  public static fromHex(hex: string): Color {
+    let digits = hex.startsWith('#') ? hex.slice(1) : hex;
+    if (digits.length === 3 || digits.length === 4) {
+      digits = [...digits].map((digit) => digit + digit).join('');
+    }
+    if (!/^[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(digits)) {
+      throw Error(`Invalid hex color: ${hex}`);
+    }
+    return new Color(
+      parseInt(digits.slice(0, 2), 16),
+      parseInt(digits.slice(2, 4), 16),
+      parseInt(digits.slice(4, 6), 16),
+      digits.length === 8 ? parseInt(digits.slice(6, 8), 16) : 255,
+    );
+  }
+
+  /**
+   * Formats the color as a hex string, e.g. #ff8800 (alpha appended when not 255)
+   */
+  public static toHex(color: Color): string {
+    const c = ColorUtils.round(color);
+    const hex = (component: number) => component.toString(16).padStart(2, '0');
+    return `#${hex(c.r)}${hex(c.g)}${hex(c.b)}${c.a === 255 ? '' : hex(c.a)}`;
   }
 
   // https://bottosson.github.io/posts/oklab/
@@ -136,6 +290,23 @@ export class ColorUtils {
       a ?? 255,
     );
   }
+
+  public static OklabToOklch(c: LABColor): LCHColor {
+    const hue = Math.atan2(c.b, c.a) * RAD_TO_DEG;
+    return {
+      l: c.l,
+      c: Math.hypot(c.a, c.b),
+      h: hue < 0 ? hue + 360 : hue,
+    };
+  }
+
+  public static OklchToOklab(c: LCHColor): LABColor {
+    return {
+      l: c.l,
+      a: c.c * Math.cos(c.h * DEG_TO_RAD),
+      b: c.c * Math.sin(c.h * DEG_TO_RAD),
+    };
+  }
 }
 
 export class Color {
@@ -144,10 +315,10 @@ export class Color {
   public b: number;
   public a: number;
 
-  constructor(r: number, g: number, b: number, a: number);
-  constructor(color: { r: number; g: number; b: number; a: number });
+  constructor(r: number, g: number, b: number, a?: number);
+  constructor(color: { r: number; g: number; b: number; a?: number });
   constructor(
-    rOrColor: number | { r: number; g: number; b: number; a: number },
+    rOrColor: number | { r: number; g: number; b: number; a?: number },
     g?: number,
     b?: number,
     a?: number,
@@ -156,12 +327,12 @@ export class Color {
       this.r = rOrColor.r;
       this.g = rOrColor.g;
       this.b = rOrColor.b;
-      this.a = rOrColor.a;
+      this.a = rOrColor.a ?? 255;
     } else {
       this.r = rOrColor;
       this.g = g!;
       this.b = b!;
-      this.a = a!;
+      this.a = a ?? 255;
     }
   }
 
@@ -170,6 +341,32 @@ export class Color {
    */
   public static fromRgba(rgba: number): Color {
     return ColorUtils.fromRgba(rgba);
+  }
+
+  /**
+   * Creates a Color from a hex string: #rgb, #rgba, #rrggbb or #rrggbbaa
+   * (leading # optional)
+   */
+  public static fromHex(hex: string): Color {
+    return ColorUtils.fromHex(hex);
+  }
+
+  /**
+   * Samples a multi-stop gradient at a 0.0-1.0 fraction, interpolating in oklab
+   */
+  public static gradient(
+    colors: readonly Color[],
+    fraction: number,
+    clamp: boolean = true,
+  ): Color {
+    return ColorUtils.gradient(colors, fraction, clamp);
+  }
+
+  /**
+   * Returns a random opaque color
+   */
+  public static random(): Color {
+    return ColorUtils.random();
   }
 
   // web colors
@@ -327,8 +524,8 @@ export class Color {
     return `Color: [r: ${this.r}, g: ${this.g}, b: ${this.b}, a:${this.a}]`;
   }
 
-  public equals(color: Color): boolean {
-    return ColorUtils.equals(this, color);
+  public equals(color: Color, epsilon: number = 0): boolean {
+    return ColorUtils.equals(this, color, epsilon);
   }
 
   public add(color: Color): Color {
@@ -340,8 +537,8 @@ export class Color {
   }
 
   /**
-   * Divides by a number (all components, inverse of scale) or
-   * component-wise by a Color (RGB only, alpha is kept)
+   * Divides all components uniformly by a number (inverse of scale) or
+   * component-wise by a Color, throws on division by zero
    */
   public divide(color: Color | number): Color {
     return ColorUtils.divide(this, color);
@@ -380,6 +577,76 @@ export class Color {
    */
   public mix(color: Color, fraction: number, clamp: boolean = true): Color {
     return this.lerpTo(color, fraction, clamp);
+  }
+
+  /**
+   * Packs the color into a 0xRRGGBBAA integer (components rounded and clamped)
+   */
+  public toRgba(): number {
+    return ColorUtils.toRgba(this);
+  }
+
+  /**
+   * Formats the color as a hex string, e.g. #ff8800 (alpha appended when not 255)
+   */
+  public toHex(): string {
+    return ColorUtils.toHex(this);
+  }
+
+  /**
+   * Rotates the hue by the given angle in degrees, preserving lightness and alpha
+   */
+  public hueShift(degrees: number): Color {
+    return ColorUtils.hueShift(this, degrees);
+  }
+
+  /**
+   * Mixes the color towards white, amount 0-1
+   */
+  public lighten(amount: number): Color {
+    return ColorUtils.lighten(this, amount);
+  }
+
+  /**
+   * Mixes the color towards black, amount 0-1
+   */
+  public darken(amount: number): Color {
+    return ColorUtils.darken(this, amount);
+  }
+
+  /**
+   * Scales the chroma (colorfulness) by 1 + amount, e.g. 0.5 for 50% more saturated
+   */
+  public saturate(amount: number): Color {
+    return ColorUtils.saturate(this, amount);
+  }
+
+  /**
+   * Scales the chroma (colorfulness) by 1 - amount, 1 gives a gray of the same lightness
+   */
+  public desaturate(amount: number): Color {
+    return ColorUtils.desaturate(this, amount);
+  }
+
+  /**
+   * Perceived brightness 0-255
+   */
+  public get luminance(): number {
+    return ColorUtils.luminance(this);
+  }
+
+  /**
+   * The color converted to a gray of the same perceived brightness, keeping alpha
+   */
+  public get grayscale(): Color {
+    return ColorUtils.grayscale(this);
+  }
+
+  /**
+   * Each component rounded to the nearest integer and clamped to [0, 255]
+   */
+  public get rounded(): Color {
+    return ColorUtils.round(this);
   }
 
   /**
