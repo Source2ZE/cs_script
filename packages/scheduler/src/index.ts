@@ -10,12 +10,12 @@ interface Task {
   everyNSeconds?: number;
 }
 
-let tasks: Task[] = [];
+const tasks: Task[] = [];
 
 export function setTimeout(callback: Function, ms: number): number {
   const id = idPool++;
 
-  tasks.unshift({
+  tasks.push({
     id,
     atSeconds: Instance.GetGameTime() + ms / 1000,
     callback,
@@ -27,7 +27,7 @@ export function setTimeout(callback: Function, ms: number): number {
 export function setInterval(callback: Function, ms: number): number {
   const id = idPool++;
 
-  tasks.unshift({
+  tasks.push({
     id,
     everyNSeconds: ms / 1000,
     atSeconds: Instance.GetGameTime() + ms / 1000,
@@ -42,22 +42,32 @@ export function delay(ms: number): Promise<void> {
 }
 
 export function clearTimeout(id: number): void {
-  tasks = tasks.filter((task) => task.id !== id);
+  const index = tasks.findIndex((task) => task.id === id);
+  if (index !== -1) tasks.splice(index, 1);
 }
 
 export const clearInterval = clearTimeout;
 
 export function clearTasks() {
-  tasks = [];
+  tasks.length = 0;
 }
 
 export function runSchedulerTick() {
-  for (let i = tasks.length - 1; i >= 0; i--) {
-    const task = tasks[i];
+  const now = Instance.GetGameTime();
 
-    if (Instance.GetGameTime() < task.atSeconds) continue;
-    if (task.everyNSeconds === undefined) tasks.splice(i, 1);
-    else task.atSeconds = Instance.GetGameTime() + task.everyNSeconds;
+  const due: Task[] = [];
+  for (const task of tasks) {
+    if (now >= task.atSeconds) due.push(task);
+  }
+
+  due.sort((a, b) => a.atSeconds - b.atSeconds);
+
+  for (const task of due) {
+    const index = tasks.indexOf(task);
+    if (index === -1) continue;
+
+    if (task.everyNSeconds === undefined) tasks.splice(index, 1);
+    else task.atSeconds = now + task.everyNSeconds;
 
     try {
       task.callback();
