@@ -1,0 +1,49 @@
+{
+  "name": "create-cs-script",
+  "version": "2.21.3",
+  "description": "Scaffold a CS2 TypeScript scripting project",
+  "license": "MIT",
+  "author": "Source2ZE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Source2ZE/cs_script.git",
+    "directory": "packages/create-cs-script"
+  },
+  "keywords": [
+    "cs2",
+    "counter-strike",
+    "cs_script",
+    "point_script",
+    "scaffold",
+    "create"
+  ],
+  "type": "module",
+  "bin": {
+    "create-cs-script": "build/index.js"
+  },
+  "files": [
+    "build",
+    "template"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.7.0",
+    "cross-spawn": "^7.0.6",
+    "package-manager-detector": "^1.4.0"
+  },
+  "devDependencies": {
+    "@s2ze/tsconfig": "workspace:*",
+    "@types/cross-spawn": "^6.0.6",
+    "@types/node": "^22.10.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "rimraf build && tsc",
+    "prepublishOnly": "npm run build"
+  }
+}

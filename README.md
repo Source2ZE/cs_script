@@ -13,6 +13,7 @@ This repository is a [pnpm](https://pnpm.io/) workspace. Each package is publish
 | [`@s2ze/scheduler`](packages/scheduler) | Scheduling helpers, setTimeout, setInterval. |
 | [`@s2ze/debug`](packages/debug) | Debugging helpers. |
 | [`@s2ze/tsconfig`](packages/tsconfig) | Shared TypeScript configuration consumed by the other packages. |
+| [`create-cs-script`](packages/create-cs-script) | Run `npm create cs-script` to start a new project. |
 
 ## Requirements
 

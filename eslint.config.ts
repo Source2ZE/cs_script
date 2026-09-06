@@ -8,6 +8,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/build/**',
       '**/.nx/**',
+      'packages/create-cs-script/template/**',
       'packages/types/src/autoimport/index.ts',
     ],
   },

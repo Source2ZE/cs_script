@@ -1,0 +1,11 @@
+{
+  "extends": "@s2ze/tsconfig/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "declaration": false
+  },
+  "include": ["./src"]
+}
