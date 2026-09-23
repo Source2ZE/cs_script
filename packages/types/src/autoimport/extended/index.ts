@@ -3,7 +3,7 @@ declare module 'cs_script/point_script' {
     player: CSPlayerPawn;
     observer: CSObserverPawn;
     cs_player_controller: CSPlayerController;
-    cs_player_camera: CSPlayerCamera;
+    cs_player_camera: CustomCameraMode;
     custom_hud_layout: CustomHudLayout;
     point_template: PointTemplate;
     [key: `weapon_${string}`]: CSWeaponBase;
