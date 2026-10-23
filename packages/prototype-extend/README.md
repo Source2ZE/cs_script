@@ -25,14 +25,14 @@ import is there for its side effect of extending `Entity.prototype`.
 
 ```ts
 import '@s2ze/prototype-extend';
-import { Instance } from 'cs_script/point_script';
+import { Console, Instance } from 'cs_script/point_script';
 import { Vec3 } from '@s2ze/math';
 
 const ent = Instance.FindEntityByName('my_prop');
 if (!ent) return;
 
 // read
-Instance.Msg(ent.Transform.origin.toString());
+Console.Log(ent.Transform.origin.toString());
 
 // write
 ent.Transform.origin = new Vec3(0, 0, 128);

@@ -1,5 +1,5 @@
 import { drawDisk } from '@s2ze/debug';
-import { type Color, CSInputs, type CSPlayerPawn, Instance } from 'cs_script/point_script';
+import { type Color, Console, CSInputs, type CSPlayerPawn, Instance } from 'cs_script/point_script';
 import { TICK_DT } from './constants';
 import { Euler } from './euler';
 import { Matrix3x4 } from './matrix';
@@ -551,8 +551,8 @@ export class Curve {
       }
     }
 
-    Instance.Msg(finalString);
-    Instance.Msg('\n\n---------------------------------------------------');
+    Console.Log(finalString);
+    Console.Log('\n\n---------------------------------------------------');
   }
 
   public static loadCurveFromString(string: string, resolution?: number): Curve | undefined {
@@ -570,7 +570,7 @@ export class Curve {
       const y = Number.parseFloat(pointString[1]);
 
       if (Number.isNaN(x) || Number.isNaN(y)) {
-        Instance.Msg(`Curve.loadCurveFromString: invalid number at index ${i}`);
+        Console.Log(`Curve.loadCurveFromString: invalid number at index ${i}`);
         return undefined;
       }
 
@@ -580,7 +580,7 @@ export class Curve {
     // A valid spline requires 1 + 3n control points (one base anchor plus three
     // per additional segment: handle-out, handle-in, anchor).
     if ((points.length - 1) % 3 !== 0) {
-      Instance.Msg(
+      Console.Log(
         `Curve.loadCurveFromString: invalid point count ${points.length}. Expected 1 + 3n (e.g. 4, 7, 10 ...).`,
       );
       return undefined;
@@ -604,7 +604,7 @@ export class Curve {
       }
     }
 
-    for (const row of rows) Instance.Msg(row);
+    for (const row of rows) Console.Log(row);
   }
 }
 

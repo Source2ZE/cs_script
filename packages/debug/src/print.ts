@@ -1,4 +1,4 @@
-import { Entity, Instance } from 'cs_script/point_script';
+import { Console, Entity } from 'cs_script/point_script';
 
 type PrintArgument
   = | string
@@ -28,5 +28,5 @@ function lineMap(value: PrintArgument) {
 }
 
 export function print(...args: PrintArgument[]) {
-  Instance.Msg(args.map(lineMap).join(' '));
+  Console.Log(args.map(lineMap).join(' '));
 }

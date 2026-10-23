@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { Instance } from 'cs_script/point_script';
+import { Console, Instance } from 'cs_script/point_script';
 
 let idPool = 0;
 
@@ -72,10 +72,10 @@ export function runSchedulerTick() {
     try {
       task.callback();
     } catch (err) {
-      Instance.Msg('An error occurred inside a scheduler task');
+      Console.Log('An error occurred inside a scheduler task');
       if (err instanceof Error) {
-        Instance.Msg(err.message);
-        Instance.Msg(err.stack ?? '<no stack>');
+        Console.Log(err.message);
+        Console.Log(err.stack ?? '<no stack>');
       }
     }
   }

@@ -9,7 +9,7 @@ declare module 'cs_script/point_script' {
     [key: `weapon_${string}`]: CSWeaponBase;
   }
 
-  interface Domain {
+  interface IPointScript {
     FindEntityByClass<T extends keyof EntityClassMap> (
       className: T,
     ): EntityClassMap[T] | undefined;
