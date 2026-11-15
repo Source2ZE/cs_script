@@ -23,4 +23,13 @@ declare module 'cs_script/point_script' {
     FindEntityByName<T extends Entity> (className: string): T | undefined;
     FindEntitiesByName<T extends Entity> (className: string): T[];
   }
+
+  interface IEntities {
+    FindByClass<T extends keyof EntityClassMap> (
+      className: T,
+    ): EntityClassMap[T][];
+    FindByClass<T extends Entity> (className: string): T[];
+
+    FindByName<T extends Entity> (name: string): T[];
+  }
 }
